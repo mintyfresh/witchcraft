@@ -19,6 +19,24 @@ protected:
     }
 
 public:
+    @property
+    string getName() const
+    {
+        return _name;
+    }
+
+    @property
+    const(TypeInfo)[] getParameterTypes() const
+    {
+        return _parameterTypes;
+    }
+
+    @property
+    const(TypeInfo) getReturnType() const
+    {
+        return _returnType;
+    }
+
     abstract Variant invoke(Object instance, Variant[] arguments...) const;
 
     T invoke(T = Variant, TList...)(Object instance, TList arguments) const
@@ -49,24 +67,6 @@ public:
     bool isVirtual() const
     {
         return !isFinal && !isStatic;
-    }
-
-    @property
-    string getName() const
-    {
-        return _name;
-    }
-
-    @property
-    const(TypeInfo)[] getParameterTypes() const
-    {
-        return _parameterTypes;
-    }
-
-    @property
-    const(TypeInfo) getReturnType() const
-    {
-        return _returnType;
     }
 
     override string toString() const

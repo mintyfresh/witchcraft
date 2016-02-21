@@ -29,9 +29,34 @@ mixin template WitchcraftImpl()
         {
             static class FieldInfoImpl(string name) : FieldInfo
             {
-                this()
+                override Variant get(Object instance) const
                 {
-                    super(name, typeid(typeof(__traits(getMember, T, name))));
+                    return Variant(__traits(getMember, cast(T) instance, name));
+                }
+
+                override string getName() const
+                {
+                    return name;
+                }
+
+                override const(ClassInfoExt) getParentClass() const
+                {
+                    return T.getClass;
+                }
+
+                override const(TypeInfo) getParentType() const
+                {
+                    return typeid(T);
+                }
+
+                override string getProtection() const
+                {
+                    return __traits(getProtection, __traits(getMember, T, name));
+                }
+
+                override const(TypeInfo) getType() const
+                {
+                    return typeid(typeof(__traits(getMember, T, name)));
                 }
 
                 override bool isStatic() const
@@ -39,11 +64,6 @@ mixin template WitchcraftImpl()
                     return __traits(compiles, {
                         auto value = __traits(getMember, T, name);
                     });
-                }
-
-                override Variant get(Object instance) const
-                {
-                    return Variant(__traits(getMember, cast(T) instance, name));
                 }
 
                 override void set(Object instance, Variant value) const
@@ -107,7 +127,7 @@ mixin template WitchcraftImpl()
 
                 static if(__traits(hasMember, BaseClassesTuple!T[0], "getClass"))
                 {
-                    __classinfoext._parent = BaseClassesTuple!T[0].getClass;
+                    __classinfoext._super = BaseClassesTuple!T[0].getClass;
                 }
 
                 foreach(name; FieldNameTuple!T)

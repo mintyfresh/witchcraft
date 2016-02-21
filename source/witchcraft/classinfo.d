@@ -15,7 +15,7 @@ abstract class TypeInfo_ClassExt : TypeInfo_Class
 protected:
     FieldInfo[string] _fields;
     MethodInfo[][string] _methods;
-    TypeInfo_ClassExt _parent;
+    TypeInfo_ClassExt _super;
 
 public:
     this(TypeInfo_Class info)
@@ -36,9 +36,9 @@ public:
         {
             return field;
         }
-        else if(getParent !is null)
+        else if(getSuper !is null)
         {
-            return getParent.getField(name);
+            return getSuper.getField(name);
         }
         else
         {
@@ -46,11 +46,23 @@ public:
         }
     }
 
+    string[] getFieldNames() const
+    {
+        if(getSuper !is null)
+        {
+            return getSuper.getFieldNames ~ getLocalFieldNames;
+        }
+        else
+        {
+            return getLocalFieldNames;
+        }
+    }
+
     const(FieldInfo)[] getFields() const
     {
-        if(getParent !is null)
+        if(getSuper !is null)
         {
-            return getParent.getFields ~ getLocalFields;
+            return getSuper.getFields ~ getLocalFields;
         }
         else
         {
@@ -64,80 +76,14 @@ public:
         return ptr ? *ptr : null;
     }
 
-    const(FieldInfo)[] getLocalFields() const
-    {
-        return _fields.values;
-    }
-
-    string[] getFieldNames() const
-    {
-        if(getParent !is null)
-        {
-            return getParent.getFieldNames ~ getLocalFieldNames;
-        }
-        else
-        {
-            return getLocalFieldNames;
-        }
-    }
-
     string[] getLocalFieldNames() const
     {
         return getLocalFields.map!"a.getName".array;
     }
 
-    const(MethodInfo) getMethod(string name, TypeInfo[] parameterTypes...) const
+    const(FieldInfo)[] getLocalFields() const
     {
-        auto method = getLocalMethod(name, parameterTypes);
-
-        if(method !is null)
-        {
-            return method;
-        }
-        else if(getParent !is null)
-        {
-            return getParent.getMethod(name, parameterTypes);
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    const(MethodInfo) getMethod(TList...)(string name) const
-    {
-        auto types = new TypeInfo[TList.length];
-
-        foreach(index, type; TList)
-        {
-            types[index] = typeid(type);
-        }
-
-        return this.getMethod(name, types);
-    }
-
-    const(MethodInfo)[] getMethods(string name) const
-    {
-        if(getParent !is null)
-        {
-            return getParent.getMethods(name) ~ getLocalMethods(name);
-        }
-        else
-        {
-            return getLocalMethods(name);
-        }
-    }
-
-    const(MethodInfo)[] getMethods() const
-    {
-        if(getParent !is null)
-        {
-            return getParent.getMethods ~ getLocalMethods;
-        }
-        else
-        {
-            return getLocalMethods;
-        }
+        return _fields.values;
     }
 
     const(MethodInfo) getLocalMethod(string name, TypeInfo[] parameterTypes...) const
@@ -174,6 +120,11 @@ public:
         return this.getLocalMethod(name, types);
     }
 
+    string[] getLocalMethodNames() const
+    {
+        return getLocalMethods.map!"a.getName".array;
+    }
+
     const(MethodInfo)[] getLocalMethods(string name) const
     {
         auto ptr = name in _methods;
@@ -192,11 +143,41 @@ public:
         return methods;
     }
 
+    const(MethodInfo) getMethod(string name, TypeInfo[] parameterTypes...) const
+    {
+        auto method = getLocalMethod(name, parameterTypes);
+
+        if(method !is null)
+        {
+            return method;
+        }
+        else if(getSuper !is null)
+        {
+            return getSuper.getMethod(name, parameterTypes);
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    const(MethodInfo) getMethod(TList...)(string name) const
+    {
+        auto types = new TypeInfo[TList.length];
+
+        foreach(index, type; TList)
+        {
+            types[index] = typeid(type);
+        }
+
+        return this.getMethod(name, types);
+    }
+
     string[] getMethodNames() const
     {
-        if(getParent !is null)
+        if(getSuper !is null)
         {
-            return getParent.getMethodNames ~ getLocalMethodNames;
+            return getSuper.getMethodNames ~ getLocalMethodNames;
         }
         else
         {
@@ -204,14 +185,40 @@ public:
         }
     }
 
-    string[] getLocalMethodNames() const
+    const(MethodInfo)[] getMethods(string name) const
     {
-        return getLocalMethods.map!"a.getName".array;
+        if(getSuper !is null)
+        {
+            return getSuper.getMethods(name) ~ getLocalMethods(name);
+        }
+        else
+        {
+            return getLocalMethods(name);
+        }
     }
 
-    const(TypeInfo_ClassExt) getParent() const
+    const(MethodInfo)[] getMethods() const
     {
-        return _parent;
+        if(getSuper !is null)
+        {
+            return getSuper.getMethods ~ getLocalMethods;
+        }
+        else
+        {
+            return getLocalMethods;
+        }
+    }
+
+    @property
+    abstract string getName() const;
+
+    @property
+    abstract string getProtection() const;
+
+    @property
+    const(TypeInfo_ClassExt) getSuper() const
+    {
+        return _super;
     }
 
     @property

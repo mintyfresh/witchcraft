@@ -5,38 +5,30 @@ import std.variant;
 
 abstract class FieldInfo
 {
-protected:
-    string _name;
-    TypeInfo _type;
-
-    this(string name, TypeInfo type)
-    {
-        _name = name;
-        _type = type;
-    }
-
-public:
-    @property
-    abstract bool isStatic() const;
-
-    @property
-    string getName() const
-    {
-        return _name;
-    }
-
-    @property
-    const(TypeInfo) getType() const
-    {
-        return _type;
-    }
-
     abstract Variant get(Object instance) const;
 
     T get(T)(Object instance) const
     {
         return this.get(instance).get!T;
     }
+
+    @property
+    abstract string getName() const;
+
+    @property
+    abstract const(ClassInfoExt) getParentClass() const;
+
+    @property
+    abstract const(TypeInfo) getParentType() const;
+
+    @property
+    abstract string getProtection() const;
+
+    @property
+    abstract const(TypeInfo) getType() const;
+
+    @property
+    abstract bool isStatic() const;
 
     abstract void set(Object instance, Variant value) const;
 
