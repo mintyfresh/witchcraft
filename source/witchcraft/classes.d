@@ -9,11 +9,6 @@ import std.traits;
 
 abstract class Class : Member
 {
-protected:
-    Field[string] _fields;
-    Method[][string] _methods;
-
-public:
     //abstract Object[] getConstructors();
 
     const(Field) getField(string name) const
@@ -34,18 +29,6 @@ public:
         }
     }
 
-    string[] getFieldNames() const
-    {
-        if(getParentClass !is null)
-        {
-            return getParentClass.getFieldNames ~ getLocalFieldNames;
-        }
-        else
-        {
-            return getLocalFieldNames;
-        }
-    }
-
     const(Field)[] getFields() const
     {
         if(getParentClass !is null)
@@ -58,24 +41,21 @@ public:
         }
     }
 
-    @property
+    string[] getFieldNames() const
+    {
+        return getFields.map!"a.getName".array;
+    }
+
     abstract string getFullName() const;
 
-    const(Field) getLocalField(string name) const
-    {
-        auto ptr = name in _fields;
-        return ptr ? *ptr : null;
-    }
+    abstract const(Field) getLocalField(string name) const;
 
     string[] getLocalFieldNames() const
     {
         return getLocalFields.map!"a.getName".array;
     }
 
-    const(Field)[] getLocalFields() const
-    {
-        return _fields.values;
-    }
+    abstract const(Field)[] getLocalFields() const;
 
     const(Method) getLocalMethod(string name, TypeInfo[] parameterTypes...) const
     {
@@ -116,23 +96,9 @@ public:
         return getLocalMethods.map!"a.getName".array;
     }
 
-    const(Method)[] getLocalMethods(string name) const
-    {
-        auto ptr = name in _methods;
-        return ptr ? *ptr : null;
-    }
+    abstract const(Method)[] getLocalMethods() const;
 
-    const(Method)[] getLocalMethods() const
-    {
-        const(Method)[] methods;
-
-        foreach(overloads; _methods)
-        {
-            methods ~= overloads;
-        }
-
-        return methods;
-    }
+    abstract const(Method)[] getLocalMethods(string name) const;
 
     const(Method) getMethod(string name, TypeInfo[] parameterTypes...) const
     {
@@ -176,18 +142,6 @@ public:
         }
     }
 
-    const(Method)[] getMethods(string name) const
-    {
-        if(getParentClass !is null)
-        {
-            return getParentClass.getMethods(name) ~ getLocalMethods(name);
-        }
-        else
-        {
-            return getLocalMethods(name);
-        }
-    }
-
     const(Method)[] getMethods() const
     {
         if(getParentClass !is null)
@@ -197,6 +151,18 @@ public:
         else
         {
             return getLocalMethods;
+        }
+    }
+
+    const(Method)[] getMethods(string name) const
+    {
+        if(getParentClass !is null)
+        {
+            return getParentClass.getMethods(name) ~ getLocalMethods(name);
+        }
+        else
+        {
+            return getLocalMethods(name);
         }
     }
 

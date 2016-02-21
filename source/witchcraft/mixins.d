@@ -25,93 +25,7 @@ mixin template WitchcraftImpl()
 
     static Class getClass()
     {
-        static class ClassImpl(T) : Class
-        {
-            mixin WitchcraftAttribute;
-            mixin WitchcraftField;
-            mixin WitchcraftMethod;
-
-            this()
-            {
-                foreach(name; FieldNameTuple!T)
-                {
-                    this._fields[name] = new FieldImpl!name;
-                }
-
-                foreach(name; __traits(derivedMembers, T))
-                {
-                    static if(is(typeof(__traits(getMember, T, name)) == function))
-                    {
-                        foreach(index, overload; __traits(getOverloads, T, name))
-                        {
-                            this._methods[name] ~= new MethodImpl!(name, index);
-                        }
-                    }
-                }
-            }
-
-            @property
-            const(Attribute)[] getAttributes() const
-            {
-                const(Attribute)[] attributes;
-
-                foreach(attribute; __traits(getAttributes, T))
-                {
-                    attributes ~= new AttributeImpl!attribute;
-                }
-
-                return attributes;
-            }
-
-            @property
-            override string getFullName() const
-            {
-                return T.classinfo.name;
-            }
-
-            @property
-            string getName() const
-            {
-                return T.stringof;
-            }
-
-            @property
-            const(Class) getParentClass() const
-            {
-                static if(__traits(hasMember, BaseClassesTuple!T[0], "getClass"))
-                {
-                    return BaseClassesTuple!T[0].getClass;
-                }
-                else
-                {
-                    return null;
-                }
-            }
-
-            @property
-            const(TypeInfo) getParentType() const
-            {
-                return typeid(BaseClassesTuple!T[0]);
-            }
-
-            @property
-            string getProtection() const
-            {
-                return __traits(getProtection, T);
-            }
-
-            @property
-            override bool isAbstract() const
-            {
-                return __traits(isAbstractClass, T);
-            }
-
-            @property
-            override bool isFinal() const
-            {
-                return __traits(isFinalClass, T);
-            }
-        }
+        mixin WitchcraftClass;
 
         if(__classinfoext is null)
         {
@@ -119,6 +33,125 @@ mixin template WitchcraftImpl()
         }
 
         return __classinfoext;
+    }
+}
+
+mixin template WitchcraftClass()
+{
+    static class ClassImpl(T) : Class
+    {
+    private:
+        Field[string] _fields;
+        Method[][string] _methods;
+
+    public:
+        mixin WitchcraftAttribute;
+        mixin WitchcraftField;
+        mixin WitchcraftMethod;
+
+        this()
+        {
+            foreach(name; FieldNameTuple!T)
+            {
+                _fields[name] = new FieldImpl!name;
+            }
+
+            foreach(name; __traits(derivedMembers, T))
+            {
+                static if(is(typeof(__traits(getMember, T, name)) == function))
+                {
+                    foreach(index, overload; __traits(getOverloads, T, name))
+                    {
+                        _methods[name] ~= new MethodImpl!(name, index);
+                    }
+                }
+            }
+        }
+
+        const(Attribute)[] getAttributes() const
+        {
+            const(Attribute)[] attributes;
+
+            foreach(attribute; __traits(getAttributes, T))
+            {
+                attributes ~= new AttributeImpl!attribute;
+            }
+
+            return attributes;
+        }
+
+        override string getFullName() const
+        {
+            return T.classinfo.name;
+        }
+
+        override const(Field) getLocalField(string name) const
+        {
+            auto ptr = name in _fields;
+            return ptr ? *ptr : null;
+        }
+
+        override const(Field)[] getLocalFields() const
+        {
+            return _fields.values;
+        }
+
+        override const(Method)[] getLocalMethods(string name) const
+        {
+            auto ptr = name in _methods;
+            return ptr ? *ptr : null;
+        }
+
+        override const(Method)[] getLocalMethods() const
+        {
+            const(Method)[] methods;
+
+            foreach(overloads; _methods.values)
+            {
+                methods ~= overloads;
+            }
+
+            return methods;
+        }
+
+        string getName() const
+        {
+            return T.stringof;
+        }
+
+        const(Class) getParentClass() const
+        {
+            static if(__traits(hasMember, BaseClassesTuple!T[0], "getClass"))
+            {
+                return BaseClassesTuple!T[0].getClass;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        const(TypeInfo) getParentType() const
+        {
+            return typeid(BaseClassesTuple!T[0]);
+        }
+
+        string getProtection() const
+        {
+            return __traits(getProtection, T);
+        }
+
+        @property
+        override bool isAbstract() const
+        {
+            return __traits(isAbstractClass, T);
+        }
+
+        @property
+        override bool isFinal() const
+        {
+            return __traits(isFinalClass, T);
+        }
     }
 }
 
