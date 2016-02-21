@@ -15,6 +15,7 @@ abstract class TypeInfo_ClassExt : TypeInfo_Class
 protected:
     FieldInfo[string] _fields;
     MethodInfo[][string] _methods;
+    TypeInfo_ClassExt _parent;
 
 public:
     this(TypeInfo_Class info)
@@ -25,7 +26,7 @@ public:
         }
     }
 
-    abstract Object[] getConstructors();
+    //abstract Object[] getConstructors();
 
     const(FieldInfo) getField(string name) const
     {
@@ -101,6 +102,18 @@ public:
         {
             return null;
         }
+    }
+
+    const(MethodInfo) getMethod(TList...)(string name) const
+    {
+        auto types = new TypeInfo[TList.length];
+
+        foreach(index, type; TList)
+        {
+            types[index] = typeid(type);
+        }
+
+        return this.getMethod(name, types);
     }
 
     const(MethodInfo)[] getMethods(string name) const
@@ -196,8 +209,14 @@ public:
         return getLocalMethods.map!"a.getName".array;
     }
 
-    TypeInfo_ClassExt getParent() const
+    const(TypeInfo_ClassExt) getParent() const
     {
-        return cast(TypeInfo_ClassExt) this.base;
+        return _parent;
     }
+
+    @property
+    abstract bool isAbstract() const;
+
+    @property
+    abstract bool isFinal() const;
 }

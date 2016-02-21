@@ -26,26 +26,26 @@ public:
     }
 
     @property
-    TypeInfo getType()
+    const(TypeInfo) getType() const
     {
         return _type;
     }
 
-    abstract Variant get(Object instance);
+    abstract Variant get(Object instance) const;
 
-    T get(T)(Object instance)
+    T get(T)(Object instance) const
     {
         return this.get(instance).get!T;
     }
 
-    abstract void set(Object instance, Variant value);
+    abstract void set(Object instance, Variant value) const;
 
-    void set(T)(Object instance, T value)
+    void set(T)(Object instance, T value) const
     {
         return this.set(instance, Variant(value));
     }
 
-    override string toString()
+    override string toString() const
     {
         return getType.toString ~ " " ~ getName;
     }

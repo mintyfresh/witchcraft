@@ -19,6 +19,29 @@ protected:
     }
 
 public:
+    abstract Variant invoke(Object instance, Variant[] arguments...) const;
+
+    T invoke(T = Variant, TList...)(Object instance, TList arguments) const
+    {
+        auto values = new Variant[TList.length];
+
+        foreach(index, argument; arguments)
+        {
+            values[index] = Variant(argument);
+        }
+
+        auto result = this.invoke(instance, values);
+
+        static if(is(T == Variant))
+        {
+            return result;
+        }
+        else
+        {
+            return result.get!T;
+        }
+    }
+
     abstract bool isFinal() const;
 
     abstract bool isStatic() const;
