@@ -61,9 +61,12 @@ mixin template WitchcraftClass()
             {
                 static if(is(typeof(__traits(getMember, T, name)) == function))
                 {
-                    foreach(index, overload; __traits(getOverloads, T, name))
+                    static if(name != "__ctor" && name != "__dtor")
                     {
-                        _methods[name] ~= new MethodImpl!(name, index);
+                        foreach(index, overload; __traits(getOverloads, T, name))
+                        {
+                            _methods[name] ~= new MethodImpl!(name, index);
+                        }
                     }
                 }
             }
@@ -267,7 +270,7 @@ mixin template WitchcraftConstructor()
                 .joiner
                 .text;
 
-            mixin("return method(" ~ invokeString ~ ");");
+            mixin("return new T(" ~ invokeString ~ ");");
         }
 
         @property

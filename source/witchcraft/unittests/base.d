@@ -31,6 +31,15 @@ class User
     ulong createdAt;
     ulong updatedAt;
 
+    this()
+    {
+    }
+
+    this(string email)
+    {
+        this.email = email;
+    }
+
     void updateEmail(string email)
     {
         this.email = email;
@@ -58,6 +67,19 @@ unittest
 
     assert(class_.getAttributes!Entity[0].isType       == true);
     assert(class_.getAttributes!Entity[0].isExpression == false);
+
+    /+ - Constructors - +/
+
+    assert(class_.getConstructors.length == 2);
+
+    assert(class_.getConstructor !is null);
+    assert(class_.getConstructor!string !is null);
+
+    User user = class_.getConstructor!string.create!User("test@email.com");
+
+    assert(user !is null);
+    assert(user.email == "test@email.com");
+    assert(user.updatedAt == 0);
 
     /+ - Fields - +/
 
@@ -99,11 +121,7 @@ unittest
     assert(class_.getMethod!(string)("updateEmail") !is null);
     auto updateEmail = class_.getMethod!(string)("updateEmail");
 
-    User user = new User;
-    assert(user.email != "test@email.com");
-    assert(user.updatedAt == 0);
-
-    updateEmail.invoke(user, "test@email.com");
-    assert(user.email == "test@email.com");
+    updateEmail.invoke(user, "user@email.com");
+    assert(user.email == "user@email.com");
     assert(user.updatedAt == 1);
 }
