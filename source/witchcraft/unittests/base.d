@@ -4,7 +4,17 @@ module witchcraft.unittests.base;
 import witchcraft;
 
 import std.algorithm;
+import std.array;
 
+struct Entity
+{
+}
+
+struct Column
+{
+}
+
+@Entity
 class User
 {
     mixin Witchcraft;
@@ -30,4 +40,11 @@ unittest
     assert(User.getClass.getFieldNames.isPermutation([
         "username", "password", "email", "createdAt", "updatedAt"
     ]));
+
+    assert(User.getClass.getAttributes.empty        == false);
+    assert(User.getClass.getAttributes!Entity.empty == false);
+    assert(User.getClass.getAttributes!Column.empty == true);
+
+    assert(User.getClass.getAttributes!Entity[0].isType       == true);
+    assert(User.getClass.getAttributes!Entity[0].isExpression == false);
 }
