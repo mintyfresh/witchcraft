@@ -1,5 +1,5 @@
 
-module witchcraft.classinfo;
+module witchcraft.classes;
 
 import witchcraft;
 
@@ -7,26 +7,16 @@ import std.algorithm;
 import std.array;
 import std.traits;
 
-alias ClassInfoExt = TypeInfo_ClassExt;
-
-abstract class TypeInfo_ClassExt : TypeInfo_Class, MemberInfo
+abstract class Class : Member
 {
 protected:
-    FieldInfo[string] _fields;
-    MethodInfo[][string] _methods;
+    Field[string] _fields;
+    Method[][string] _methods;
 
 public:
-    this(TypeInfo_Class info)
-    {
-        foreach(name; FieldNameTuple!TypeInfo_Class)
-        {
-            __traits(getMember, this, name) = __traits(getMember, info, name);
-        }
-    }
-
     //abstract Object[] getConstructors();
 
-    const(FieldInfo) getField(string name) const
+    const(Field) getField(string name) const
     {
         auto field = getLocalField(name);
 
@@ -56,7 +46,7 @@ public:
         }
     }
 
-    const(FieldInfo)[] getFields() const
+    const(Field)[] getFields() const
     {
         if(getParentClass !is null)
         {
@@ -71,7 +61,7 @@ public:
     @property
     abstract string getFullName() const;
 
-    const(FieldInfo) getLocalField(string name) const
+    const(Field) getLocalField(string name) const
     {
         auto ptr = name in _fields;
         return ptr ? *ptr : null;
@@ -82,12 +72,12 @@ public:
         return getLocalFields.map!"a.getName".array;
     }
 
-    const(FieldInfo)[] getLocalFields() const
+    const(Field)[] getLocalFields() const
     {
         return _fields.values;
     }
 
-    const(MethodInfo) getLocalMethod(string name, TypeInfo[] parameterTypes...) const
+    const(Method) getLocalMethod(string name, TypeInfo[] parameterTypes...) const
     {
         auto methods = getLocalMethods(name);
 
@@ -109,7 +99,7 @@ public:
         }
     }
 
-    const(MethodInfo) getLocalMethod(TList...)(string name) const
+    const(Method) getLocalMethod(TList...)(string name) const
     {
         auto types = new TypeInfo[TList.length];
 
@@ -126,15 +116,15 @@ public:
         return getLocalMethods.map!"a.getName".array;
     }
 
-    const(MethodInfo)[] getLocalMethods(string name) const
+    const(Method)[] getLocalMethods(string name) const
     {
         auto ptr = name in _methods;
         return ptr ? *ptr : null;
     }
 
-    const(MethodInfo)[] getLocalMethods() const
+    const(Method)[] getLocalMethods() const
     {
-        const(MethodInfo)[] methods;
+        const(Method)[] methods;
 
         foreach(overloads; _methods)
         {
@@ -144,7 +134,7 @@ public:
         return methods;
     }
 
-    const(MethodInfo) getMethod(string name, TypeInfo[] parameterTypes...) const
+    const(Method) getMethod(string name, TypeInfo[] parameterTypes...) const
     {
         auto method = getLocalMethod(name, parameterTypes);
 
@@ -162,7 +152,7 @@ public:
         }
     }
 
-    const(MethodInfo) getMethod(TList...)(string name) const
+    const(Method) getMethod(TList...)(string name) const
     {
         auto types = new TypeInfo[TList.length];
 
@@ -186,7 +176,7 @@ public:
         }
     }
 
-    const(MethodInfo)[] getMethods(string name) const
+    const(Method)[] getMethods(string name) const
     {
         if(getParentClass !is null)
         {
@@ -198,7 +188,7 @@ public:
         }
     }
 
-    const(MethodInfo)[] getMethods() const
+    const(Method)[] getMethods() const
     {
         if(getParentClass !is null)
         {

@@ -1,24 +1,24 @@
 
-module witchcraft.memberinfo;
+module witchcraft.members;
 
 import witchcraft;
 
 import std.algorithm;
 import std.array;
 
-interface MemberInfo
+interface Member
 {
     @property
-    const(AttributeInfo)[] getAttributes() const;
+    const(Attribute)[] getAttributes() const;
 
     @property
-    final const(AttributeInfo)[] getAttributes(TypeInfo type) const
+    final const(Attribute)[] getAttributes(TypeInfo type) const
     {
         return getAttributes.filter!(a => a.getType == type).array;
     }
 
     @property
-    final const(AttributeInfo)[] getAttributes(T)() const
+    final const(Attribute)[] getAttributes(T)() const
     {
         return getAttributes(typeid(T));
     }
@@ -27,7 +27,7 @@ interface MemberInfo
     string getName() const;
 
     @property
-    const(ClassInfoExt) getParentClass() const;
+    const(Class) getParentClass() const;
 
     @property
     const(TypeInfo) getParentType() const;

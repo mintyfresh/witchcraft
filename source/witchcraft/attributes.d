@@ -1,12 +1,12 @@
 
-module witchcraft.attributeinfo;
+module witchcraft.attributes;
 
 import witchcraft;
 
 import std.conv;
 import std.variant;
 
-abstract class AttributeInfo
+abstract class Attribute
 {
     @property
     abstract Variant get() const;
@@ -18,7 +18,7 @@ abstract class AttributeInfo
     }
 
     @property
-    abstract const(ClassInfoExt) getClass() const;
+    abstract const(Class) getClass() const;
 
     @property
     abstract const(TypeInfo) getType() const;

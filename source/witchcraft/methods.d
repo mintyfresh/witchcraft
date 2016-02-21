@@ -1,5 +1,5 @@
 
-module witchcraft.methodinfo;
+module witchcraft.methods;
 
 import witchcraft;
 
@@ -8,13 +8,13 @@ import std.array;
 import std.string;
 import std.variant;
 
-abstract class MethodInfo : MemberInfo
+abstract class Method : Member
 {
     @property
     abstract const(TypeInfo)[] getParameterTypes() const;
 
     @property
-    abstract const(ClassInfoExt) getReturnClass() const;
+    abstract const(Class) getReturnClass() const;
 
     @property
     abstract const(TypeInfo) getReturnType() const;

@@ -1,5 +1,5 @@
 
-module witchcraft.fieldinfo;
+module witchcraft.fields;
 
 import witchcraft;
 
@@ -7,7 +7,7 @@ import std.algorithm;
 import std.array;
 import std.variant;
 
-abstract class FieldInfo : MemberInfo
+abstract class Field : Member
 {
     abstract Variant get(Object instance) const;
 

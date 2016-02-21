@@ -1,9 +1,9 @@
 
 module witchcraft;
 
-public import witchcraft.attributeinfo;
-public import witchcraft.classinfo;
-public import witchcraft.fieldinfo;
-public import witchcraft.memberinfo;
-public import witchcraft.methodinfo;
+public import witchcraft.attributes;
+public import witchcraft.classes;
+public import witchcraft.fields;
+public import witchcraft.members;
+public import witchcraft.methods;
 public import witchcraft.mixins;

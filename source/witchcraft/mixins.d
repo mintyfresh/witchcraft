@@ -21,23 +21,21 @@ mixin template WitchcraftImpl()
     import std.traits;
     import std.variant;
 
-    private static ClassInfoExt __classinfoext;
+    private static Class __classinfoext;
 
-    static ClassInfoExt getClass()
+    static Class getClass()
     {
-        static class ClassInfoExtImpl(T) : ClassInfoExt
+        static class ClassImpl(T) : Class
         {
-            mixin WitchcraftAttributeInfo;
-            mixin WitchcraftFieldInfo;
-            mixin WitchcraftMethodInfo;
+            mixin WitchcraftAttribute;
+            mixin WitchcraftField;
+            mixin WitchcraftMethod;
 
-            this(ClassInfo info)
+            this()
             {
-                super(info);
-
                 foreach(name; FieldNameTuple!T)
                 {
-                    this._fields[name] = new FieldInfoImpl!name;
+                    this._fields[name] = new FieldImpl!name;
                 }
 
                 foreach(name; __traits(derivedMembers, T))
@@ -46,20 +44,20 @@ mixin template WitchcraftImpl()
                     {
                         foreach(index, overload; __traits(getOverloads, T, name))
                         {
-                            this._methods[name] ~= new MethodInfoImpl!(name, index);
+                            this._methods[name] ~= new MethodImpl!(name, index);
                         }
                     }
                 }
             }
 
             @property
-            const(AttributeInfo)[] getAttributes() const
+            const(Attribute)[] getAttributes() const
             {
-                const(AttributeInfo)[] attributes;
+                const(Attribute)[] attributes;
 
                 foreach(attribute; __traits(getAttributes, T))
                 {
-                    attributes ~= new AttributeInfoImpl!attribute;
+                    attributes ~= new AttributeImpl!attribute;
                 }
 
                 return attributes;
@@ -78,7 +76,7 @@ mixin template WitchcraftImpl()
             }
 
             @property
-            const(ClassInfoExt) getParentClass() const
+            const(Class) getParentClass() const
             {
                 static if(__traits(hasMember, BaseClassesTuple!T[0], "getClass"))
                 {
@@ -117,16 +115,16 @@ mixin template WitchcraftImpl()
 
         if(__classinfoext is null)
         {
-            __classinfoext = new ClassInfoExtImpl!(typeof(this))(typeof(this).classinfo);
+            __classinfoext = new ClassImpl!(typeof(this));
         }
 
         return __classinfoext;
     }
 }
 
-mixin template WitchcraftAttributeInfo()
+mixin template WitchcraftAttribute()
 {
-    static class AttributeInfoImpl(alias attribute) : AttributeInfo
+    static class AttributeImpl(alias attribute) : Attribute
     {
         override Variant get() const
         {
@@ -140,7 +138,7 @@ mixin template WitchcraftAttributeInfo()
             }
         }
 
-        override const(ClassInfoExt) getClass() const
+        override const(Class) getClass() const
         {
             static if(is(typeof(attribute)))
             {
@@ -190,9 +188,9 @@ mixin template WitchcraftAttributeInfo()
     }
 }
 
-mixin template WitchcraftFieldInfo()
+mixin template WitchcraftField()
 {
-    static class FieldInfoImpl(string name) : FieldInfo
+    static class FieldImpl(string name) : Field
     {
         override Variant get(Object instance) const
         {
@@ -200,16 +198,16 @@ mixin template WitchcraftFieldInfo()
         }
 
         @property
-        const(AttributeInfo)[] getAttributes() const
+        const(Attribute)[] getAttributes() const
         {
             alias member = Alias!(__traits(getMember, T, name));
             alias attributes = AliasSeq!(__traits(getAttributes, member));
 
-            auto values = new AttributeInfo[attributes.length];
+            auto values = new Attribute[attributes.length];
 
             foreach(index, attribute; attributes)
             {
-                values[index] = new AttributeInfoImpl!attribute;
+                values[index] = new AttributeImpl!attribute;
             }
 
             return values;
@@ -222,7 +220,7 @@ mixin template WitchcraftFieldInfo()
         }
 
         @property
-        const(ClassInfoExt) getParentClass() const
+        const(Class) getParentClass() const
         {
             return T.getClass;
         }
@@ -262,21 +260,21 @@ mixin template WitchcraftFieldInfo()
     }
 }
 
-mixin template WitchcraftMethodInfo()
+mixin template WitchcraftMethod()
 {
-    static class MethodInfoImpl(string name, size_t overload) : MethodInfo
+    static class MethodImpl(string name, size_t overload) : Method
     {
         @property
-        const(AttributeInfo)[] getAttributes() const
+        const(Attribute)[] getAttributes() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
             alias attributes = AliasSeq!(__traits(getAttributes, method));
 
-            auto values = new AttributeInfo[attributes.length];
+            auto values = new Attribute[attributes.length];
 
             foreach(index, attribute; attributes)
             {
-                values[index] = new AttributeInfoImpl!attribute;
+                values[index] = new AttributeImpl!attribute;
             }
 
             return values;
@@ -303,7 +301,7 @@ mixin template WitchcraftMethodInfo()
         }
 
         @property
-        const(ClassInfoExt) getParentClass() const
+        const(Class) getParentClass() const
         {
             return T.getClass;
         }
@@ -323,7 +321,7 @@ mixin template WitchcraftMethodInfo()
         }
 
         @property
-        override const(ClassInfoExt) getReturnClass() const
+        override const(Class) getReturnClass() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
             alias Return = ReturnType!method;
