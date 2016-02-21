@@ -30,6 +30,12 @@ class User
 
     ulong createdAt;
     ulong updatedAt;
+
+    void updateEmail(string email)
+    {
+        this.email = email;
+        updatedAt += 1;
+    }
 }
 
 unittest
@@ -37,10 +43,14 @@ unittest
     assert(User.getClass !is null);
     auto class_ = User.getClass;
 
+    /+ - Classes - +/
+
     assert(class_.getName     == "User");
     assert(class_.getFullName == "witchcraft.unittests.base.User");
     assert(class_.isAbstract  == false);
     assert(class_.isFinal     == false);
+
+    /+ - Class Attributes - +/
 
     assert(class_.getAttributes.empty        == false);
     assert(class_.getAttributes!Entity.empty == false);
@@ -49,12 +59,16 @@ unittest
     assert(class_.getAttributes!Entity[0].isType       == true);
     assert(class_.getAttributes!Entity[0].isExpression == false);
 
+    /+ - Fields - +/
+
     assert(class_.getFieldNames.isPermutation([
         "username", "password", "email", "createdAt", "updatedAt"
     ]));
 
     assert(class_.getField("username") !is null);
     auto username = class_.getField("username");
+
+    /+ - Field Attributes - +/
 
     assert(username.getAttributes.empty        == false);
     assert(username.getAttributes!Entity.empty == true);
@@ -66,6 +80,8 @@ unittest
     assert(class_.getField("password") !is null);
     auto password = class_.getField("password");
 
+    /+ - Field Attributes (Expression) - +/
+
     assert(password.getAttributes.empty        == false);
     assert(password.getAttributes!Entity.empty == true);
     assert(password.getAttributes!Column.empty == false);
@@ -74,4 +90,20 @@ unittest
     assert(password.getAttributes!Column[0].isExpression == true);
 
     assert(password.getAttributes!Column[0].get!Column.name == "pass_word");
+
+    /+ - Methods - +/
+
+    assert(class_.getMethodNames.isPermutation([ "getClass", "updateEmail" ]));
+
+    assert(class_.getMethods("updateEmail").empty == false);
+    assert(class_.getMethod!(string)("updateEmail") !is null);
+    auto updateEmail = class_.getMethod!(string)("updateEmail");
+
+    User user = new User;
+    assert(user.email != "test@email.com");
+    assert(user.updatedAt == 0);
+
+    updateEmail.invoke(user, "test@email.com");
+    assert(user.email == "test@email.com");
+    assert(user.updatedAt == 1);
 }

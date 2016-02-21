@@ -252,11 +252,29 @@ mixin template WitchcraftMethodInfo()
 {
     static class MethodInfoImpl(string name, size_t overload) : MethodInfo
     {
+        @property
+        override const(AttributeInfo)[] getAttributes() const
+        {
+            alias method = Alias!(__traits(getOverloads, T, name)[overload]);
+            alias attributes = AliasSeq!(__traits(getAttributes, method));
+
+            auto values = new AttributeInfo[attributes.length];
+
+            foreach(index, attribute; attributes)
+            {
+                values[index] = new AttributeInfoImpl!attribute;
+            }
+
+            return values;
+        }
+
+        @property
         override string getName() const
         {
             return name;
         }
 
+        @property
         override const(TypeInfo)[] getParameterTypes() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
@@ -270,16 +288,19 @@ mixin template WitchcraftMethodInfo()
             return parameterTypes;
         }
 
+        @property
         override const(ClassInfoExt) getParentClass() const
         {
             return T.getClass;
         }
 
+        @property
         override const(TypeInfo) getParentType() const
         {
             return typeid(T);
         }
 
+        @property
         override const(ClassInfoExt) getReturnClass() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
@@ -295,6 +316,7 @@ mixin template WitchcraftMethodInfo()
             }
         }
 
+        @property
         override const(TypeInfo) getReturnType() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
@@ -315,9 +337,21 @@ mixin template WitchcraftMethodInfo()
                 .joiner
                 .text;
 
-            mixin("return Variant(__traits(getOverloads, cast(T) instance, name)[overload](" ~ invokeString ~ "));");
+            static if(!is(ReturnType!method == void))
+            {
+                mixin("auto result = __traits(getOverloads, cast(T) instance, name)[overload](" ~ invokeString ~ ");");
+
+                return Variant(result);
+            }
+            else
+            {
+                mixin("__traits(getOverloads, cast(T) instance, name)[overload](" ~ invokeString ~ ");");
+
+                return Variant(null);
+            }
         }
 
+        @property
         override bool isFinal() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
@@ -325,6 +359,7 @@ mixin template WitchcraftMethodInfo()
             return __traits(isFinalFunction, method);
         }
 
+        @property
         override bool isStatic() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
