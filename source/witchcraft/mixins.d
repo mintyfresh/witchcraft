@@ -121,6 +121,43 @@ mixin template WitchcraftImpl()
                 }
             }
 
+            static class AttributeInfoImpl(alias attribute) : AttributeInfo
+            {
+                override Variant get() const
+                {
+                    static if(is(typeof(attribute)))
+                    {
+                        return Variant(attribute);
+                    }
+                    else
+                    {
+                        assert(0, "Attribute has no value.");
+                    }
+                }
+
+                override const(TypeInfo) getType() const
+                {
+                    static if(is(typeof(attribute)))
+                    {
+                        return typeid(typeof(attribute));
+                    }
+                    else
+                    {
+                        return typeid(attribute);
+                    }
+                }
+
+                override bool isExpression() const
+                {
+                    return is(typeof(attribute));
+                }
+
+                override bool isType() const
+                {
+                    return !isExpression;
+                }
+            }
+
             this(ClassInfo info)
             {
                 super(info);
@@ -145,6 +182,18 @@ mixin template WitchcraftImpl()
                         }
                     }
                 }
+            }
+
+            override const(AttributeInfo)[] getAttributes() const
+            {
+                const(AttributeInfo)[] attributes;
+
+                foreach(attribute; __traits(getAttributes, T))
+                {
+                    attributes ~= new AttributeInfoImpl!attribute;
+                }
+
+                return attributes;
             }
 
             override bool isAbstract() const

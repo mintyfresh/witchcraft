@@ -1,6 +1,8 @@
 
 module witchcraft.fieldinfo;
 
+import witchcraft.classinfo;
+
 import std.variant;
 
 abstract class FieldInfo

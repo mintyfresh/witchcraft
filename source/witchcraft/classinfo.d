@@ -1,8 +1,7 @@
 
 module witchcraft.classinfo;
 
-import witchcraft.fieldinfo;
-import witchcraft.methodinfo;
+import witchcraft;
 
 import std.algorithm;
 import std.array;
@@ -24,6 +23,18 @@ public:
         {
             __traits(getMember, this, name) = __traits(getMember, info, name);
         }
+    }
+
+    abstract const(AttributeInfo)[] getAttributes() const;
+
+    const(AttributeInfo)[] getAttributes(TypeInfo type) const
+    {
+        return getAttributes.filter!(a => a.getType == type).array;
+    }
+
+    const(AttributeInfo)[] getAttributes(T)() const
+    {
+        return getAttributes(typeid(T));
     }
 
     //abstract Object[] getConstructors();
