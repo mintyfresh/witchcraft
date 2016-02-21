@@ -49,6 +49,9 @@ abstract class Method : Member
     abstract bool isStatic() const;
 
     @property
+    abstract bool isVarArgs() const;
+
+    @property
     bool isVirtual() const
     {
         return !isFinal && !isStatic;

@@ -9,7 +9,41 @@ import std.traits;
 
 abstract class Class : Member
 {
-    //abstract Object[] getConstructors();
+    @property
+    abstract Object create() const;
+
+    @property
+    T create(T : Object)() const
+    {
+        return cast(T) this.create;
+    }
+
+    const(Constructor) getConstructor(TypeInfo[] parameterTypes...) const
+    {
+        foreach(constructor; getConstructors)
+        {
+            if(constructor.getParameterTypes == parameterTypes)
+            {
+                return constructor;
+            }
+        }
+
+        return null;
+    }
+
+    const(Constructor) getConstructor(TList...)() const
+    {
+        auto types = new TypeInfo[TList.length];
+
+        foreach(index, type; TList)
+        {
+            types[index] = typeid(type);
+        }
+
+        return this.getConstructor(types);
+    }
+
+    abstract const(Constructor)[] getConstructors() const;
 
     const(Field) getField(string name) const
     {
