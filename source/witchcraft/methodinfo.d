@@ -1,41 +1,24 @@
 
 module witchcraft.methodinfo;
 
+import witchcraft;
+
 import std.string;
 import std.variant;
 
 abstract class MethodInfo
 {
-protected:
-    string _name;
-    TypeInfo[] _parameterTypes;
-    TypeInfo _returnType;
+    abstract string getName() const;
 
-    this(string name, TypeInfo[] parameterTypes, TypeInfo returnType)
-    {
-        _name = name;
-        _parameterTypes = parameterTypes;
-        _returnType = returnType;
-    }
+    abstract const(TypeInfo)[] getParameterTypes() const;
 
-public:
-    @property
-    string getName() const
-    {
-        return _name;
-    }
+    abstract const(ClassInfoExt) getParentClass() const;
 
-    @property
-    const(TypeInfo)[] getParameterTypes() const
-    {
-        return _parameterTypes;
-    }
+    abstract const(TypeInfo) getParentType() const;
 
-    @property
-    const(TypeInfo) getReturnType() const
-    {
-        return _returnType;
-    }
+    abstract const(ClassInfoExt) getReturnClass() const;
+
+    abstract const(TypeInfo) getReturnType() const;
 
     abstract Variant invoke(Object instance, Variant[] arguments...) const;
 
