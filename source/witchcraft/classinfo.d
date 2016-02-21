@@ -81,6 +81,9 @@ public:
         }
     }
 
+    @property
+    abstract string getFullName() const;
+
     const(FieldInfo) getLocalField(string name) const
     {
         auto ptr = name in _fields;

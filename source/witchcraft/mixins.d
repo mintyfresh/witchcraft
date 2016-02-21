@@ -93,6 +93,7 @@ mixin template WitchcraftImpl()
                 }
             }
 
+            @property
             override const(AttributeInfo)[] getAttributes() const
             {
                 const(AttributeInfo)[] attributes;
@@ -105,11 +106,31 @@ mixin template WitchcraftImpl()
                 return attributes;
             }
 
+            @property
+            override string getFullName() const
+            {
+                return T.classinfo.name;
+            }
+
+            @property
+            override string getName() const
+            {
+                return T.stringof;
+            }
+
+            @property
+            override string getProtection() const
+            {
+                return __traits(getProtection, T);
+            }
+
+            @property
             override bool isAbstract() const
             {
                 return __traits(isAbstractClass, T);
             }
 
+            @property
             override bool isFinal() const
             {
                 return __traits(isFinalClass, T);
