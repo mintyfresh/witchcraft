@@ -27,45 +27,9 @@ mixin template WitchcraftImpl()
     {
         static class ClassInfoExtImpl(T) : ClassInfoExt
         {
+            mixin WitchcraftAttributeInfo;
             mixin WitchcraftFieldInfo;
             mixin WitchcraftMethodInfo;
-
-            static class AttributeInfoImpl(alias attribute) : AttributeInfo
-            {
-                override Variant get() const
-                {
-                    static if(is(typeof(attribute)))
-                    {
-                        return Variant(attribute);
-                    }
-                    else
-                    {
-                        assert(0, "Attribute has no value.");
-                    }
-                }
-
-                override const(TypeInfo) getType() const
-                {
-                    static if(is(typeof(attribute)))
-                    {
-                        return typeid(typeof(attribute));
-                    }
-                    else
-                    {
-                        return typeid(attribute);
-                    }
-                }
-
-                override bool isExpression() const
-                {
-                    return is(typeof(attribute));
-                }
-
-                override bool isType() const
-                {
-                    return !isExpression;
-                }
-            }
 
             this(ClassInfo info)
             {
@@ -146,6 +110,72 @@ mixin template WitchcraftImpl()
     }
 }
 
+mixin template WitchcraftAttributeInfo()
+{
+    static class AttributeInfoImpl(alias attribute) : AttributeInfo
+    {
+        override Variant get() const
+        {
+            static if(is(typeof(attribute)))
+            {
+                return Variant(attribute);
+            }
+            else
+            {
+                assert(0, "Attribute has no value.");
+            }
+        }
+
+        override const(ClassInfoExt) getClass() const
+        {
+            static if(is(typeof(attribute)))
+            {
+                static if(__traits(hasMember, typeof(attribute), "getClass"))
+                {
+                    return typeof(attribute).getClass;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+            else
+            {
+                static if(__traits(hasMember, attribute, "getClass"))
+                {
+                    return attribute.getClass;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+        }
+
+        override const(TypeInfo) getType() const
+        {
+            static if(is(typeof(attribute)))
+            {
+                return typeid(typeof(attribute));
+            }
+            else
+            {
+                return typeid(attribute);
+            }
+        }
+
+        override bool isExpression() const
+        {
+            return is(typeof(attribute));
+        }
+
+        override bool isType() const
+        {
+            return !isExpression;
+        }
+    }
+}
+
 mixin template WitchcraftFieldInfo()
 {
     static class FieldInfoImpl(string name) : FieldInfo
@@ -155,31 +185,53 @@ mixin template WitchcraftFieldInfo()
             return Variant(__traits(getMember, cast(T) instance, name));
         }
 
+        @property
+        override const(AttributeInfo)[] getAttributes() const
+        {
+            alias member = Alias!(__traits(getMember, T, name));
+            alias attributes = AliasSeq!(__traits(getAttributes, member));
+
+            auto values = new AttributeInfo[attributes.length];
+
+            foreach(index, attribute; attributes)
+            {
+                values[index] = new AttributeInfoImpl!attribute;
+            }
+
+            return values;
+        }
+
+        @property
         override string getName() const
         {
             return name;
         }
 
+        @property
         override const(ClassInfoExt) getParentClass() const
         {
             return T.getClass;
         }
 
+        @property
         override const(TypeInfo) getParentType() const
         {
             return typeid(T);
         }
 
+        @property
         override string getProtection() const
         {
             return __traits(getProtection, __traits(getMember, T, name));
         }
 
+        @property
         override const(TypeInfo) getType() const
         {
             return typeid(typeof(__traits(getMember, T, name)));
         }
 
+        @property
         override bool isStatic() const
         {
             return __traits(compiles, {

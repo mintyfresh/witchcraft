@@ -1,8 +1,10 @@
 
 module witchcraft.fieldinfo;
 
-import witchcraft.classinfo;
+import witchcraft;
 
+import std.algorithm;
+import std.array;
 import std.variant;
 
 abstract class FieldInfo
@@ -12,6 +14,21 @@ abstract class FieldInfo
     T get(T)(Object instance) const
     {
         return this.get(instance).get!T;
+    }
+
+    @property
+    abstract const(AttributeInfo)[] getAttributes() const;
+
+    @property
+    const(AttributeInfo)[] getAttributes(TypeInfo type) const
+    {
+        return getAttributes.filter!(a => a.getType == type).array;
+    }
+
+    @property
+    const(AttributeInfo)[] getAttributes(T)() const
+    {
+        return getAttributes(typeid(T));
     }
 
     @property

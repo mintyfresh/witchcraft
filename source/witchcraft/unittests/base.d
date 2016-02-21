@@ -12,6 +12,7 @@ struct Entity
 
 struct Column
 {
+    string name;
 }
 
 @Entity
@@ -19,7 +20,10 @@ class User
 {
     mixin Witchcraft;
 
+    @Column
     string username;
+
+    @Column("pass_word")
     string password;
 
     string email;
@@ -31,20 +35,43 @@ class User
 unittest
 {
     assert(User.getClass !is null);
+    auto class_ = User.getClass;
 
-    assert(User.getClass.getName     == "User");
-    assert(User.getClass.getFullName == "witchcraft.unittests.base.User");
-    assert(User.getClass.isAbstract  == false);
-    assert(User.getClass.isFinal     == false);
+    assert(class_.getName     == "User");
+    assert(class_.getFullName == "witchcraft.unittests.base.User");
+    assert(class_.isAbstract  == false);
+    assert(class_.isFinal     == false);
 
-    assert(User.getClass.getFieldNames.isPermutation([
+    assert(class_.getAttributes.empty        == false);
+    assert(class_.getAttributes!Entity.empty == false);
+    assert(class_.getAttributes!Column.empty == true);
+
+    assert(class_.getAttributes!Entity[0].isType       == true);
+    assert(class_.getAttributes!Entity[0].isExpression == false);
+
+    assert(class_.getFieldNames.isPermutation([
         "username", "password", "email", "createdAt", "updatedAt"
     ]));
 
-    assert(User.getClass.getAttributes.empty        == false);
-    assert(User.getClass.getAttributes!Entity.empty == false);
-    assert(User.getClass.getAttributes!Column.empty == true);
+    assert(class_.getField("username") !is null);
+    auto username = class_.getField("username");
 
-    assert(User.getClass.getAttributes!Entity[0].isType       == true);
-    assert(User.getClass.getAttributes!Entity[0].isExpression == false);
+    assert(username.getAttributes.empty        == false);
+    assert(username.getAttributes!Entity.empty == true);
+    assert(username.getAttributes!Column.empty == false);
+
+    assert(username.getAttributes!Column[0].isType       == true);
+    assert(username.getAttributes!Column[0].isExpression == false);
+
+    assert(class_.getField("password") !is null);
+    auto password = class_.getField("password");
+
+    assert(password.getAttributes.empty        == false);
+    assert(password.getAttributes!Entity.empty == true);
+    assert(password.getAttributes!Column.empty == false);
+
+    assert(password.getAttributes!Column[0].isType       == false);
+    assert(password.getAttributes!Column[0].isExpression == true);
+
+    assert(password.getAttributes!Column[0].get!Column.name == "pass_word");
 }
