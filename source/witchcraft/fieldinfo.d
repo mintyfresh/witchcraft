@@ -7,7 +7,7 @@ import std.algorithm;
 import std.array;
 import std.variant;
 
-abstract class FieldInfo
+abstract class FieldInfo : MemberInfo
 {
     abstract Variant get(Object instance) const;
 
@@ -15,33 +15,6 @@ abstract class FieldInfo
     {
         return this.get(instance).get!T;
     }
-
-    @property
-    abstract const(AttributeInfo)[] getAttributes() const;
-
-    @property
-    const(AttributeInfo)[] getAttributes(TypeInfo type) const
-    {
-        return getAttributes.filter!(a => a.getType == type).array;
-    }
-
-    @property
-    const(AttributeInfo)[] getAttributes(T)() const
-    {
-        return getAttributes(typeid(T));
-    }
-
-    @property
-    abstract string getName() const;
-
-    @property
-    abstract const(ClassInfoExt) getParentClass() const;
-
-    @property
-    abstract const(TypeInfo) getParentType() const;
-
-    @property
-    abstract string getProtection() const;
 
     @property
     abstract const(TypeInfo) getType() const;

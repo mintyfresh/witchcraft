@@ -9,12 +9,11 @@ import std.traits;
 
 alias ClassInfoExt = TypeInfo_ClassExt;
 
-abstract class TypeInfo_ClassExt : TypeInfo_Class
+abstract class TypeInfo_ClassExt : TypeInfo_Class, MemberInfo
 {
 protected:
     FieldInfo[string] _fields;
     MethodInfo[][string] _methods;
-    TypeInfo_ClassExt _super;
 
 public:
     this(TypeInfo_Class info)
@@ -23,18 +22,6 @@ public:
         {
             __traits(getMember, this, name) = __traits(getMember, info, name);
         }
-    }
-
-    abstract const(AttributeInfo)[] getAttributes() const;
-
-    const(AttributeInfo)[] getAttributes(TypeInfo type) const
-    {
-        return getAttributes.filter!(a => a.getType == type).array;
-    }
-
-    const(AttributeInfo)[] getAttributes(T)() const
-    {
-        return getAttributes(typeid(T));
     }
 
     //abstract Object[] getConstructors();
@@ -47,9 +34,9 @@ public:
         {
             return field;
         }
-        else if(getSuper !is null)
+        else if(getParentClass !is null)
         {
-            return getSuper.getField(name);
+            return getParentClass.getField(name);
         }
         else
         {
@@ -59,9 +46,9 @@ public:
 
     string[] getFieldNames() const
     {
-        if(getSuper !is null)
+        if(getParentClass !is null)
         {
-            return getSuper.getFieldNames ~ getLocalFieldNames;
+            return getParentClass.getFieldNames ~ getLocalFieldNames;
         }
         else
         {
@@ -71,9 +58,9 @@ public:
 
     const(FieldInfo)[] getFields() const
     {
-        if(getSuper !is null)
+        if(getParentClass !is null)
         {
-            return getSuper.getFields ~ getLocalFields;
+            return getParentClass.getFields ~ getLocalFields;
         }
         else
         {
@@ -165,9 +152,9 @@ public:
         {
             return method;
         }
-        else if(getSuper !is null)
+        else if(getParentClass !is null)
         {
-            return getSuper.getMethod(name, parameterTypes);
+            return getParentClass.getMethod(name, parameterTypes);
         }
         else
         {
@@ -189,9 +176,9 @@ public:
 
     string[] getMethodNames() const
     {
-        if(getSuper !is null)
+        if(getParentClass !is null)
         {
-            return getSuper.getMethodNames ~ getLocalMethodNames;
+            return getParentClass.getMethodNames ~ getLocalMethodNames;
         }
         else
         {
@@ -201,9 +188,9 @@ public:
 
     const(MethodInfo)[] getMethods(string name) const
     {
-        if(getSuper !is null)
+        if(getParentClass !is null)
         {
-            return getSuper.getMethods(name) ~ getLocalMethods(name);
+            return getParentClass.getMethods(name) ~ getLocalMethods(name);
         }
         else
         {
@@ -213,26 +200,14 @@ public:
 
     const(MethodInfo)[] getMethods() const
     {
-        if(getSuper !is null)
+        if(getParentClass !is null)
         {
-            return getSuper.getMethods ~ getLocalMethods;
+            return getParentClass.getMethods ~ getLocalMethods;
         }
         else
         {
             return getLocalMethods;
         }
-    }
-
-    @property
-    abstract string getName() const;
-
-    @property
-    abstract string getProtection() const;
-
-    @property
-    const(TypeInfo_ClassExt) getSuper() const
-    {
-        return _super;
     }
 
     @property

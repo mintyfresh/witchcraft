@@ -8,34 +8,10 @@ import std.array;
 import std.string;
 import std.variant;
 
-abstract class MethodInfo
+abstract class MethodInfo : MemberInfo
 {
     @property
-    abstract const(AttributeInfo)[] getAttributes() const;
-
-    @property
-    const(AttributeInfo)[] getAttributes(TypeInfo type) const
-    {
-        return getAttributes.filter!(a => a.getType == type).array;
-    }
-
-    @property
-    const(AttributeInfo)[] getAttributes(T)() const
-    {
-        return getAttributes(typeid(T));
-    }
-
-    @property
-    abstract string getName() const;
-
-    @property
     abstract const(TypeInfo)[] getParameterTypes() const;
-
-    @property
-    abstract const(ClassInfoExt) getParentClass() const;
-
-    @property
-    abstract const(TypeInfo) getParentType() const;
 
     @property
     abstract const(ClassInfoExt) getReturnClass() const;

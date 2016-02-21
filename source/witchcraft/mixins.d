@@ -35,11 +35,6 @@ mixin template WitchcraftImpl()
             {
                 super(info);
 
-                static if(__traits(hasMember, BaseClassesTuple!T[0], "getClass"))
-                {
-                    __classinfoext._super = BaseClassesTuple!T[0].getClass;
-                }
-
                 foreach(name; FieldNameTuple!T)
                 {
                     this._fields[name] = new FieldInfoImpl!name;
@@ -58,7 +53,7 @@ mixin template WitchcraftImpl()
             }
 
             @property
-            override const(AttributeInfo)[] getAttributes() const
+            const(AttributeInfo)[] getAttributes() const
             {
                 const(AttributeInfo)[] attributes;
 
@@ -77,13 +72,32 @@ mixin template WitchcraftImpl()
             }
 
             @property
-            override string getName() const
+            string getName() const
             {
                 return T.stringof;
             }
 
             @property
-            override string getProtection() const
+            const(ClassInfoExt) getParentClass() const
+            {
+                static if(__traits(hasMember, BaseClassesTuple!T[0], "getClass"))
+                {
+                    return BaseClassesTuple!T[0].getClass;
+                }
+                else
+                {
+                    return null;
+                }
+            }
+
+            @property
+            const(TypeInfo) getParentType() const
+            {
+                return typeid(BaseClassesTuple!T[0]);
+            }
+
+            @property
+            string getProtection() const
             {
                 return __traits(getProtection, T);
             }
@@ -186,7 +200,7 @@ mixin template WitchcraftFieldInfo()
         }
 
         @property
-        override const(AttributeInfo)[] getAttributes() const
+        const(AttributeInfo)[] getAttributes() const
         {
             alias member = Alias!(__traits(getMember, T, name));
             alias attributes = AliasSeq!(__traits(getAttributes, member));
@@ -202,25 +216,25 @@ mixin template WitchcraftFieldInfo()
         }
 
         @property
-        override string getName() const
+        string getName() const
         {
             return name;
         }
 
         @property
-        override const(ClassInfoExt) getParentClass() const
+        const(ClassInfoExt) getParentClass() const
         {
             return T.getClass;
         }
 
         @property
-        override const(TypeInfo) getParentType() const
+        const(TypeInfo) getParentType() const
         {
             return typeid(T);
         }
 
         @property
-        override string getProtection() const
+        string getProtection() const
         {
             return __traits(getProtection, __traits(getMember, T, name));
         }
@@ -253,7 +267,7 @@ mixin template WitchcraftMethodInfo()
     static class MethodInfoImpl(string name, size_t overload) : MethodInfo
     {
         @property
-        override const(AttributeInfo)[] getAttributes() const
+        const(AttributeInfo)[] getAttributes() const
         {
             alias method = Alias!(__traits(getOverloads, T, name)[overload]);
             alias attributes = AliasSeq!(__traits(getAttributes, method));
@@ -269,7 +283,7 @@ mixin template WitchcraftMethodInfo()
         }
 
         @property
-        override string getName() const
+        string getName() const
         {
             return name;
         }
@@ -289,15 +303,23 @@ mixin template WitchcraftMethodInfo()
         }
 
         @property
-        override const(ClassInfoExt) getParentClass() const
+        const(ClassInfoExt) getParentClass() const
         {
             return T.getClass;
         }
 
         @property
-        override const(TypeInfo) getParentType() const
+        const(TypeInfo) getParentType() const
         {
             return typeid(T);
+        }
+
+        @property
+        string getProtection() const
+        {
+            alias method = Alias!(__traits(getOverloads, T, name)[overload]);
+
+            return __traits(getProtection, method);
         }
 
         @property
