@@ -6,13 +6,13 @@ import std.variant;
 abstract class FieldInfo
 {
 protected:
-    TypeInfo _type;
     string _name;
+    TypeInfo _type;
 
-    this(TypeInfo type, string name)
+    this(string name, TypeInfo type)
     {
-        _type = type;
         _name = name;
+        _type = type;
     }
 
 public:
@@ -20,13 +20,13 @@ public:
     abstract bool isStatic() const;
 
     @property
-    string name() const
+    string getName() const
     {
         return _name;
     }
 
     @property
-    TypeInfo type()
+    TypeInfo getType()
     {
         return _type;
     }
@@ -47,6 +47,6 @@ public:
 
     override string toString()
     {
-        return type.toString ~ " " ~ name;
+        return getType.toString ~ " " ~ getName;
     }
 }

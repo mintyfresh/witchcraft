@@ -80,26 +80,26 @@ public:
 
     string[] getLocalFieldNames() const
     {
-        return _fields.values.map!"a.name".array;
+        return _fields.values.map!"a.getName".array;
     }
 
-    abstract Object[] getFunctions();
+    abstract Object[] getMethods();
 
-    abstract Object[] getLocalFunctions();
+    abstract Object[] getLocalMethods();
 
-    string[] getFunctionNames()
+    string[] getMethodNames()
     {
         if(getParent !is null)
         {
-            return getParent.getFunctionNames ~ getLocalFunctionNames;
+            return getParent.getMethodNames ~ getLocalMethodNames;
         }
         else
         {
-            return getLocalFunctionNames;
+            return getLocalMethodNames;
         }
     }
 
-    abstract string[] getLocalFunctionNames();
+    abstract string[] getLocalMethodNames();
 
     TypeInfo_ClassExt getParent() const
     {
