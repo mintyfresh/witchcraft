@@ -238,9 +238,26 @@ mixin template WitchcraftField()
         }
 
         @property
-        override const(TypeInfo) getType() const
+        override const(Class) getValueClass() const
         {
-            return typeid(typeof(__traits(getMember, T, name)));
+            alias Type = typeof(__traits(getMember, T, name));
+
+            static if(__traits(hasMember, Type, "getClass"))
+            {
+                return Type.getClass;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        @property
+        override const(TypeInfo) getValueType() const
+        {
+            alias Type = typeof(__traits(getMember, T, name));
+
+            return typeid(Type);
         }
 
         @property

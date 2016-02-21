@@ -17,7 +17,10 @@ abstract class Field : Member
     }
 
     @property
-    abstract const(TypeInfo) getType() const;
+    abstract const(Class) getValueClass() const;
+
+    @property
+    abstract const(TypeInfo) getValueType() const;
 
     @property
     abstract bool isStatic() const;
@@ -31,6 +34,6 @@ abstract class Field : Member
 
     override string toString() const
     {
-        return getType.toString ~ " " ~ getName;
+        return getValueType.toString ~ " " ~ getName;
     }
 }
