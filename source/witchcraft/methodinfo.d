@@ -29,25 +29,25 @@ public:
     }
 
     @property
-    string name() const
+    string getName() const
     {
         return _name;
     }
 
     @property
-    TypeInfo[] getParameterTypes()
+    const(TypeInfo)[] getParameterTypes() const
     {
         return _parameterTypes;
     }
 
     @property
-    TypeInfo getReturnType()
+    const(TypeInfo) getReturnType() const
     {
         return _returnType;
     }
 
-    override string toString()
+    override string toString() const
     {
-        return "%s %s(%(%s, %))".format(getReturnType, name, getParameterTypes);
+        return "%s %s(%(%s, %))".format(getReturnType, getName, getParameterTypes);
     }
 }
