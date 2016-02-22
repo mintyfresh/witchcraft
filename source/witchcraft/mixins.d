@@ -3,7 +3,7 @@ module witchcraft.mixins;
 
 mixin template Witchcraft()
 {
-    static if(__traits(hasMember, typeof(super), "getClass"))
+    static if(__traits(hasMember, typeof(super), "classof"))
     {
         override mixin WitchcraftImpl;
     }
@@ -23,7 +23,8 @@ mixin template WitchcraftImpl()
 
     private static Class __classinfoext;
 
-    static Class getClass()
+    @property
+    static Class classof()
     {
         mixin WitchcraftClass;
 
@@ -33,6 +34,11 @@ mixin template WitchcraftImpl()
         }
 
         return __classinfoext;
+    }
+
+    Class getClass()
+    {
+        return typeof(this).classof;
     }
 }
 
@@ -151,9 +157,9 @@ mixin template WitchcraftClass()
 
         const(Class) getParentClass() const
         {
-            static if(__traits(hasMember, BaseClassesTuple!T[0], "getClass"))
+            static if(__traits(hasMember, BaseClassesTuple!T[0], "classof"))
             {
-                return BaseClassesTuple!T[0].getClass;
+                return BaseClassesTuple!T[0].classof;
             }
             else
             {
@@ -205,9 +211,9 @@ mixin template WitchcraftAttribute()
         {
             static if(is(typeof(attribute)))
             {
-                static if(__traits(hasMember, typeof(attribute), "getClass"))
+                static if(__traits(hasMember, typeof(attribute), "classof"))
                 {
-                    return typeof(attribute).getClass;
+                    return typeof(attribute).classof;
                 }
                 else
                 {
@@ -216,9 +222,9 @@ mixin template WitchcraftAttribute()
             }
             else
             {
-                static if(__traits(hasMember, attribute, "getClass"))
+                static if(__traits(hasMember, attribute, "classof"))
                 {
-                    return attribute.getClass;
+                    return attribute.classof;
                 }
                 else
                 {
@@ -294,9 +300,9 @@ mixin template WitchcraftConstructor()
 
             foreach(index, Parameter; Parameters!method)
             {
-                static if(__traits(hasMember, Parameter, "getClass"))
+                static if(__traits(hasMember, Parameter, "classof"))
                 {
-                    parameterClasses[index] = Parameter.getClass;
+                    parameterClasses[index] = Parameter.classof;
                 }
             }
 
@@ -319,7 +325,7 @@ mixin template WitchcraftConstructor()
         @property
         const(Class) getParentClass() const
         {
-            return T.getClass;
+            return T.classof;
         }
 
         @property
@@ -376,7 +382,7 @@ mixin template WitchcraftField()
         @property
         const(Class) getParentClass() const
         {
-            return T.getClass;
+            return T.classof;
         }
 
         @property
@@ -396,9 +402,9 @@ mixin template WitchcraftField()
         {
             alias Type = typeof(__traits(getMember, T, name));
 
-            static if(__traits(hasMember, Type, "getClass"))
+            static if(__traits(hasMember, Type, "classof"))
             {
-                return Type.getClass;
+                return Type.classof;
             }
             else
             {
@@ -465,9 +471,9 @@ mixin template WitchcraftMethod()
 
             foreach(index, Parameter; Parameters!method)
             {
-                static if(__traits(hasMember, Parameter, "getClass"))
+                static if(__traits(hasMember, Parameter, "classof"))
                 {
-                    parameterClasses[index] = Parameter.getClass;
+                    parameterClasses[index] = Parameter.classof;
                 }
             }
 
@@ -489,7 +495,7 @@ mixin template WitchcraftMethod()
         @property
         const(Class) getParentClass() const
         {
-            return T.getClass;
+            return T.classof;
         }
 
         @property
@@ -509,9 +515,9 @@ mixin template WitchcraftMethod()
         {
             alias Return = ReturnType!method;
 
-            static if(__traits(hasMember, Return, "getClass"))
+            static if(__traits(hasMember, Return, "classof"))
             {
-                return Return.getClass;
+                return Return.classof;
             }
             else
             {

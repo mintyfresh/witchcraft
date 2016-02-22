@@ -49,8 +49,8 @@ class User
 
 unittest
 {
-    assert(User.getClass !is null);
-    auto class_ = User.getClass;
+    assert(User.classof !is null);
+    auto class_ = User.classof;
 
     /+ - Classes - +/
 

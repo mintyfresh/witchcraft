@@ -13,7 +13,7 @@ import witchcraft;
 class User
 {
     mixin Witchcraft;
-    
+
     string username;
     string password;
     string email;
@@ -25,11 +25,12 @@ And now you have some amazing new runtime reflection powers to play with.
 ```d
 void main()
 {
-    Class c = User.getClass;
-    
+    Class c = User.classof;
+    // ... or new User().getClass;
+
     // Create a new user object,
     User user = cast(User) c.create;
-    
+
     // Iterate over fields . . .
     foreach(field; c.getFields)
     {
