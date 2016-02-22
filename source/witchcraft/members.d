@@ -17,8 +17,24 @@ interface Member
      + Returns:
      +   An array of attributes.
      ++/
-    @property
     const(Attribute)[] getAttributes() const;
+
+    /++
+     + Returns an array of attributes of the given class that are attched to
+     + this element. If no such attributes exist, an empty array is returned.
+     +
+     + Params:
+     +   class_ = The class of attribute to filter by.
+     +
+     + Returns:
+     +   An array of attributes.
+     ++/
+    final const(Attribute)[] getAttributes(Class class_) const
+    {
+        return getAttributes
+            .filter!(a => a.getAttributeClass == class_)
+            .array;
+    }
 
     /++
      + Returns an array of attributes of the given type that are attched to
@@ -30,10 +46,11 @@ interface Member
      + Returns:
      +   An array of attributes.
      ++/
-    @property
     final const(Attribute)[] getAttributes(TypeInfo type) const
     {
-        return getAttributes.filter!(a => a.getType == type).array;
+        return getAttributes
+            .filter!(a => a.getAttributeType == type)
+            .array;
     }
 
     /++
@@ -45,7 +62,6 @@ interface Member
      + Returns:
      +   An array of attributes.
      ++/
-    @property
     final const(Attribute)[] getAttributes(T)() const
     {
         return getAttributes(typeid(T));

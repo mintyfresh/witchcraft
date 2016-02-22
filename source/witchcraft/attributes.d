@@ -18,10 +18,10 @@ abstract class Attribute
     }
 
     @property
-    abstract const(Class) getClass() const;
+    abstract const(Class) getAttributeClass() const;
 
     @property
-    abstract const(TypeInfo) getType() const;
+    abstract const(TypeInfo) getAttributeType() const;
 
     @property
     abstract bool isExpression() const;
@@ -37,7 +37,7 @@ abstract class Attribute
         }
         else
         {
-            return "@(" ~ getType.text ~ ")";
+            return "@(" ~ getAttributeType.text ~ ")";
         }
     }
 }

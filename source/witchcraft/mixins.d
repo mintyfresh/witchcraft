@@ -248,7 +248,7 @@ mixin template WitchcraftAttribute()
             }
         }
 
-        override const(Class) getClass() const
+        override const(Class) getAttributeClass() const
         {
             static if(is(typeof(attribute)))
             {
@@ -274,7 +274,7 @@ mixin template WitchcraftAttribute()
             }
         }
 
-        override const(TypeInfo) getType() const
+        override const(TypeInfo) getAttributeType() const
         {
             static if(is(typeof(attribute)))
             {
