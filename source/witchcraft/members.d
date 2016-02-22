@@ -68,15 +68,14 @@ abstract class Member
     }
 
     /++
-     + Returns the class that encapsulates this one. Null is returned if this
-     + is the topmost element, or if the outer class lacks reflective meta
+     + Returns the type that encapsulates this one. Null is returned if this
+     + is the topmost element, or if the outer type lacks reflective meta
      + information.
      +
      + Returns:
-     +   The declaring element's class.
+     +   The declaring element's type.
      ++/
-    @property
-    abstract const(Aggregate) getDeclaringClass() const;
+    abstract const(Type) getDeclaringType() const;
 
     /++
      + Returns a `TypeInfo` object for the declaring element.
@@ -87,8 +86,7 @@ abstract class Member
      + See_Also:
      +   getDeclaringClass
      ++/
-    @property
-    abstract const(TypeInfo) getDeclaringType() const;
+    abstract const(TypeInfo) getDeclaringTypeInfo() const;
 
     /++
      + The name of the element.
@@ -96,7 +94,6 @@ abstract class Member
      + Returns:
      +   The name of this element.
      ++/
-    @property
     abstract string getName() const;
 
     /++
@@ -114,6 +111,5 @@ abstract class Member
      + Returns:
      +   This element's protection.
      ++/
-    @property
     abstract string getProtection() const;
 }

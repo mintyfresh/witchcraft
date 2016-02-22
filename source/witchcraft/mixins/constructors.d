@@ -56,14 +56,32 @@ mixin template WitchcraftConstructor()
             return values;
         }
 
-        override const(Aggregate) getDeclaringClass() const
+        override const(Type) getDeclaringType() const
         {
-            return T.classof;
+            alias Parent = Alias!(__traits(parent, method));
+
+            static if(__traits(hasMember, Parent, "classof"))
+            {
+                return Parent.classof;
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        override const(TypeInfo) getDeclaringType() const
+        override const(TypeInfo) getDeclaringTypeInfo() const
         {
-            return typeid(T);
+            alias Parent = Alias!(__traits(parent, method));
+
+            static if(__traits(compiles, typeid(Parent)))
+            {
+                return typeid(Parent);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         override string getFullName() const

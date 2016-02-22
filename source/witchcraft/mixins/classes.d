@@ -74,13 +74,13 @@ mixin template WitchcraftClass()
             }
         }
 
-        override const(Class) getDeclaringClass() const
+        override const(Type) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
-            static if(__traits(hasMember, T, "classof"))
+            static if(__traits(hasMember, Parent, "classof"))
             {
-                return T.classof;
+                return Parent.classof;
             }
             else
             {
@@ -88,7 +88,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        override const(TypeInfo) getDeclaringType() const
+        override const(TypeInfo) getDeclaringTypeInfo() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -104,7 +104,7 @@ mixin template WitchcraftClass()
 
         override string getFullName() const
         {
-            return T.classinfo.name;
+            return fullyQualifiedName!T;
         }
 
         override const(Field) getLocalField(string name) const

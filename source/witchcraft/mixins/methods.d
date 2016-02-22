@@ -16,7 +16,6 @@ mixin template WitchcraftMethod()
         alias Return = ReturnType!method;
 
     public:
-        @property
         override const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, method));
@@ -68,26 +67,40 @@ mixin template WitchcraftMethod()
             return parameterTypes;
         }
 
-        @property
-        override const(Aggregate) getDeclaringClass() const
+        override const(Type) getDeclaringType() const
         {
-            return T.classof;
+            alias Parent = Alias!(__traits(parent, method));
+
+            static if(__traits(hasMember, Parent, "classof"))
+            {
+                return Parent.classof;
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        @property
-        override const(TypeInfo) getDeclaringType() const
+        override const(TypeInfo) getDeclaringTypeInfo() const
         {
-            return typeid(T);
+            alias Parent = Alias!(__traits(parent, method));
+
+            static if(__traits(compiles, typeid(Parent)))
+            {
+                return typeid(Parent);
+            }
+            else
+            {
+                return null;
+            }
         }
 
-        @property
         override string getProtection() const
         {
             return __traits(getProtection, method);
         }
 
-        @property
-        override const(Class) getReturnClass() const
+        override const(Type) getReturnType() const
         {
             static if(__traits(hasMember, Return, "classof"))
             {
@@ -100,9 +113,16 @@ mixin template WitchcraftMethod()
         }
 
         @property
-        override const(TypeInfo) getReturnType() const
+        override const(TypeInfo) getReturnTypeInfo() const
         {
-            return typeid(Return);
+            static if(__traits(compiles, typeid(Return)))
+            {
+                return typeid(Return);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         override Variant invoke(Variant instance, Variant[] arguments...) const

@@ -35,23 +35,23 @@ abstract class Method : Member
     abstract const(TypeInfo)[] getParameterTypes() const;
 
     /++
-     + A `Class` object that represent's this method's return type, if type
+     + A `Type` object that represent's this method's return type, if type
      + type has reflective support. Null is returned otherwise.
      +
      + Returns:
      +   This method's return type.
      ++/
     @property
-    abstract const(Class) getReturnClass() const;
+    abstract const(Type) getReturnType() const;
 
     /++
-     + This method's return type.
+     + This method's return `TypeInfo` object.
      +
      + Returns:
      +   This method's return type.
      ++/
     @property
-    abstract const(TypeInfo) getReturnType() const;
+    abstract const(TypeInfo) getReturnTypeInfo() const;
 
     /++
      + Invokes this method on the given instance of class using arguments given
@@ -146,6 +146,6 @@ abstract class Method : Member
 
     override string toString() const
     {
-        return "%s %s(%(%s, %))".format(getReturnType, getName, getParameterTypes);
+        return "%s %s(%(%s, %))".format(getReturnTypeInfo, getName, getParameterTypes);
     }
 }

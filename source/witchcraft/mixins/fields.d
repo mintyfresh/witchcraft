@@ -13,7 +13,6 @@ mixin template WitchcraftField()
     {
     private:
         alias member = Alias!(__traits(getMember, T, name));
-        alias Type   = typeof(member);
 
     public:
         override Variant get(Variant instance) const
@@ -38,42 +37,27 @@ mixin template WitchcraftField()
             return values;
         }
 
-        @property
-        override const(Aggregate) getDeclaringClass() const
+        override const(Type) getDeclaringType() const
         {
-            return T.classof;
-        }
+            alias Parent = Alias!(__traits(parent, member));
 
-        @property
-        override const(TypeInfo) getDeclaringType() const
-        {
-            return typeid(T);
-        }
-
-        @property
-        override string getName() const
-        {
-            return name;
-        }
-
-        @property
-        override string getFullName() const
-        {
-            return fullyQualifiedName!member;
-        }
-
-        @property
-        override string getProtection() const
-        {
-            return __traits(getProtection, __traits(getMember, T, name));
-        }
-
-        @property
-        override const(Aggregate) getValueClass() const
-        {
-            static if(__traits(hasMember, Type, "classof"))
+            static if(__traits(hasMember, Parent, "classof"))
             {
-                return Type.classof;
+                return Parent.classof;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        override const(TypeInfo) getDeclaringTypeInfo() const
+        {
+            alias Parent = Alias!(__traits(parent, member));
+
+            static if(__traits(compiles, typeid(Parent)))
+            {
+                return typeid(Parent);
             }
             else
             {
@@ -82,9 +66,36 @@ mixin template WitchcraftField()
         }
 
         @property
-        override const(TypeInfo) getValueType() const
+        override string getName() const
         {
-            return typeid(Type);
+            return name;
+        }
+
+        override string getFullName() const
+        {
+            return fullyQualifiedName!member;
+        }
+
+        override string getProtection() const
+        {
+            return __traits(getProtection, __traits(getMember, T, name));
+        }
+
+        override const(Type) getValueType() const
+        {
+            static if(__traits(hasMember, typeof(member), "classof"))
+            {
+                return typeof(member).classof;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        override const(TypeInfo) getValueTypeInfo() const
+        {
+            return typeid(typeof(member));
         }
 
         @property
@@ -99,7 +110,7 @@ mixin template WitchcraftField()
         {
             auto i = instance.get!T;
 
-            __traits(getMember, i, name) = value.get!Type;
+            __traits(getMember, i, name) = value.get!(typeof(member));
         }
     }
 }
