@@ -153,7 +153,7 @@ mixin template WitchcraftClass()
             return T.stringof;
         }
 
-        const(Class) getParentClass() const
+        const(Class) getDeclaringClass() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -167,7 +167,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        const(TypeInfo) getParentType() const
+        const(TypeInfo) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -364,13 +364,13 @@ mixin template WitchcraftConstructor()
         }
 
         @property
-        const(Class) getParentClass() const
+        const(Class) getDeclaringClass() const
         {
             return T.classof;
         }
 
         @property
-        const(TypeInfo) getParentType() const
+        const(TypeInfo) getDeclaringType() const
         {
             return typeid(T);
         }
@@ -421,13 +421,13 @@ mixin template WitchcraftField()
         }
 
         @property
-        const(Class) getParentClass() const
+        const(Class) getDeclaringClass() const
         {
             return T.classof;
         }
 
         @property
-        const(TypeInfo) getParentType() const
+        const(TypeInfo) getDeclaringType() const
         {
             return typeid(T);
         }
@@ -534,13 +534,13 @@ mixin template WitchcraftMethod()
         }
 
         @property
-        const(Class) getParentClass() const
+        const(Class) getDeclaringClass() const
         {
             return T.classof;
         }
 
         @property
-        const(TypeInfo) getParentType() const
+        const(TypeInfo) getDeclaringType() const
         {
             return typeid(T);
         }

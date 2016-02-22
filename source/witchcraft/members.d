@@ -52,6 +52,29 @@ interface Member
     }
 
     /++
+     + Returns the class that encapsulates this one. Null is returned if this
+     + is the topmost element, or if the outer class lacks reflective meta
+     + information.
+     +
+     + Returns:
+     +   The declaring element's class.
+     ++/
+    @property
+    const(Class) getDeclaringClass() const;
+
+    /++
+     + Returns a `TypeInfo` object for the declaring element.
+     +
+     + Returns:
+     +   The type of the declaring element.
+     +
+     + See_Also:
+     +   getDeclaringClass
+     ++/
+    @property
+    const(TypeInfo) getDeclaringType() const;
+
+    /++
      + The name of the element.
      +
      + Returns:
@@ -59,29 +82,6 @@ interface Member
      ++/
     @property
     string getName() const;
-
-    /++
-     + Returns the class that encapsulates this one. Null is returned if this
-     + is the topmost element, or if the outer class lacks reflective meta
-     + information.
-     +
-     + Returns:
-     +   The parent element's class.
-     ++/
-    @property
-    const(Class) getParentClass() const;
-
-    /++
-     + Returns a `TypeInfo` object for the parent element.
-     +
-     + Returns:
-     +   The type of the parent element.
-     +
-     + See_Also:
-     +   getParentClass
-     ++/
-    @property
-    const(TypeInfo) getParentType() const;
 
     /++
      + Returns a string that represents this element's declared protection.
