@@ -100,7 +100,7 @@ abstract class Class : Member
     abstract const(Constructor)[] getConstructors() const;
 
     /++
-     + Looks up a field by name, searching this class, and each of its parent
+     + Looks up a field by name, searching this class, and each of its super
      + classes in turn.
      +
      + Params:
@@ -117,9 +117,9 @@ abstract class Class : Member
         {
             return field;
         }
-        else if(getParentClass !is null)
+        else if(getSuperClass !is null)
         {
-            return getParentClass.getField(name);
+            return getSuperClass.getField(name);
         }
         else
         {
@@ -129,7 +129,7 @@ abstract class Class : Member
 
     /++
      + Returns an array of all fields defined by this class and classes that
-     + it inherits from. This only extends to parent classes that also use
+     + it inherits from. This only extends to super classes that also use
      + `Witchcraft`.
      +
      + Returns:
@@ -137,9 +137,9 @@ abstract class Class : Member
      ++/
     const(Field)[] getFields() const
     {
-        if(getParentClass !is null)
+        if(getSuperClass !is null)
         {
-            return getParentClass.getFields ~ getLocalFields;
+            return getSuperClass.getFields ~ getLocalFields;
         }
         else
         {
@@ -149,7 +149,7 @@ abstract class Class : Member
 
     /++
      + Returns an array of names of all fields defined by this class and
-     + classes that it inherits from. This only extends to parent classes that
+     + classes that it inherits from. This only extends to super classes that
      + also use `Witchcraft`.
      +
      + This method is equivalent to mapping the result of `getFields()` to the
@@ -235,9 +235,9 @@ abstract class Class : Member
         {
             return method;
         }
-        else if(getParentClass !is null)
+        else if(getSuperClass !is null)
         {
-            return getParentClass.getMethod(name, parameterTypes);
+            return getSuperClass.getMethod(name, parameterTypes);
         }
         else
         {
@@ -259,9 +259,9 @@ abstract class Class : Member
 
     string[] getMethodNames() const
     {
-        if(getParentClass !is null)
+        if(getSuperClass !is null)
         {
-            return getParentClass.getMethodNames ~ getLocalMethodNames;
+            return getSuperClass.getMethodNames ~ getLocalMethodNames;
         }
         else
         {
@@ -271,9 +271,9 @@ abstract class Class : Member
 
     const(Method)[] getMethods() const
     {
-        if(getParentClass !is null)
+        if(getSuperClass !is null)
         {
-            return getParentClass.getMethods ~ getLocalMethods;
+            return getSuperClass.getMethods ~ getLocalMethods;
         }
         else
         {
@@ -283,15 +283,19 @@ abstract class Class : Member
 
     const(Method)[] getMethods(string name) const
     {
-        if(getParentClass !is null)
+        if(getSuperClass !is null)
         {
-            return getParentClass.getMethods(name) ~ getLocalMethods(name);
+            return getSuperClass.getMethods(name) ~ getLocalMethods(name);
         }
         else
         {
             return getLocalMethods(name);
         }
     }
+
+    abstract const(Class) getSuperClass() const;
+
+    abstract const(TypeInfo) getSuperType() const;
 
     /++
      + Checks if this class is abstract.

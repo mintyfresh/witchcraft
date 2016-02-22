@@ -3,18 +3,6 @@ module witchcraft.mixins;
 
 mixin template Witchcraft()
 {
-    static if(__traits(hasMember, typeof(super), "classof"))
-    {
-        override mixin WitchcraftImpl;
-    }
-    else
-    {
-        mixin WitchcraftImpl;
-    }
-}
-
-mixin template WitchcraftImpl()
-{
     import witchcraft;
 
     import std.meta;
@@ -36,9 +24,19 @@ mixin template WitchcraftImpl()
         return __classinfoext;
     }
 
-    Class getClass()
+    static if(__traits(hasMember, typeof(super), "getClass"))
     {
-        return typeof(this).classof;
+        override Class getClass()
+        {
+            return typeof(this).classof;
+        }
+    }
+    else
+    {
+        Class getClass()
+        {
+            return typeof(this).classof;
+        }
     }
 }
 
@@ -157,9 +155,11 @@ mixin template WitchcraftClass()
 
         const(Class) getParentClass() const
         {
-            static if(__traits(hasMember, BaseClassesTuple!T[0], "classof"))
+            alias Parent = Alias!(__traits(parent, T));
+
+            static if(__traits(hasMember, T, "classof"))
             {
-                return BaseClassesTuple!T[0].classof;
+                return T.classof;
             }
             else
             {
@@ -169,7 +169,48 @@ mixin template WitchcraftClass()
 
         const(TypeInfo) getParentType() const
         {
-            return typeid(BaseClassesTuple!T[0]);
+            alias Parent = Alias!(__traits(parent, T));
+
+            static if(__traits(compiles, typeid(Parent)))
+            {
+                return typeid(Parent);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        override const(Class) getSuperClass() const
+        {
+            alias Bases = BaseClassesTuple!T;
+
+            static if(Bases.length == 0)
+            {
+                return null;
+            }
+            else static if(__traits(hasMember, Bases[0], "classof"))
+            {
+                return Bases[0].classof;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        override const(TypeInfo) getSuperType() const
+        {
+            alias Bases = BaseClassesTuple!T;
+
+            static if(Bases.length > 0)
+            {
+                return typeid(Bases[0]);
+            }
+            else
+            {
+                return null;
+            }
         }
 
         string getProtection() const
