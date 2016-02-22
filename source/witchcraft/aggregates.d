@@ -100,11 +100,24 @@ abstract class Aggregate : Type
      ++/
     abstract const(Field)[] getFields() const;
 
-    final const(Method) getMethod(string name, TypeInfo[] parameterTypes...) const
+    final const(Method) getMethod(string name, Type[] parameterTypes...) const
     {
         foreach(method; getMethods(name))
         {
             if(method.getParameterTypes == parameterTypes)
+            {
+                return method;
+            }
+        }
+
+        return null;
+    }
+
+    final const(Method) getMethod(string name, TypeInfo[] parameterTypeInfos...) const
+    {
+        foreach(method; getMethods(name))
+        {
+            if(method.getParameterTypeInfos == parameterTypeInfos)
             {
                 return method;
             }

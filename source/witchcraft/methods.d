@@ -14,17 +14,17 @@ import std.variant;
 abstract class Method : Member
 {
     /++
-     + Returns an array of `Class` objects representing this method's
+     + Returns an array of `Type` objects representing this method's
      + parameter types. If a parameter does not have an associated reflective
      + type, its value is `null`.
      +
      + Returns:
-     +   This method's parameter classes.
+     +   This method's parameter types.
      +
      + See_Also:
      +   getParameterTypes
      ++/
-    abstract const(Class)[] getParameterClasses() const;
+    abstract const(Type)[] getParameterTypes() const;
 
     /++
      + Returns an array representing the method's parameter types.
@@ -32,7 +32,7 @@ abstract class Method : Member
      + Returns:
      +   This method's parameter types.
      ++/
-    abstract const(TypeInfo)[] getParameterTypes() const;
+    abstract const(TypeInfo)[] getParameterTypeInfos() const;
 
     /++
      + A `Type` object that represent's this method's return type, if type
@@ -146,6 +146,8 @@ abstract class Method : Member
 
     override string toString() const
     {
-        return "%s %s(%(%s, %))".format(getReturnTypeInfo, getName, getParameterTypes);
+        return "%s %s(%(%s, %))".format(
+            getReturnTypeInfo, getName, getParameterTypeInfos
+        );
     }
 }

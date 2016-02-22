@@ -40,31 +40,34 @@ mixin template WitchcraftMethod()
             return fullyQualifiedName!method;
         }
 
-        override const(Class)[] getParameterClasses() const
+        override const(Type)[] getParameterTypes() const
         {
-            auto parameterClasses = new Class[Parameters!method.length];
+            auto parameterTypes = new Type[Parameters!method.length];
 
             foreach(index, Parameter; Parameters!method)
             {
                 static if(__traits(hasMember, Parameter, "classof"))
                 {
-                    parameterClasses[index] = Parameter.classof;
+                    parameterTypes[index] = Parameter.classof;
                 }
             }
 
-            return parameterClasses;
+            return parameterTypes;
         }
 
-        override const(TypeInfo)[] getParameterTypes() const
+        override const(TypeInfo)[] getParameterTypeInfos() const
         {
-            auto parameterTypes = new TypeInfo[Parameters!method.length];
+            auto parameterTypeInfos = new TypeInfo[Parameters!method.length];
 
             foreach(index, Parameter; Parameters!method)
             {
-                parameterTypes[index] = typeid(Parameter);
+                static if(__traits(compiles, typeid(Parameter)))
+                {
+                    parameterTypeInfos[index] = typeid(Parameter);
+                }
             }
 
-            return parameterTypes;
+            return parameterTypeInfos;
         }
 
         override const(Type) getDeclaringType() const
