@@ -1,5 +1,5 @@
 name "witchcraft"
-description "A more complete extension to runtime reflection in D."
+description "Extensions to runtime reflection in D."
 copyright "Copyright © 2016, Mihail K"
 authors "Mihail-K"
 targetType "library"
