@@ -41,6 +41,8 @@ class Constructor : Member
         return "__ctor";
     }
 
+    abstract const(Class)[] getParameterClasses() const;
+
     /++
      + Returns an array representing the constructor's parameter types.
      ++/

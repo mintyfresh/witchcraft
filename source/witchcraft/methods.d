@@ -11,6 +11,9 @@ import std.variant;
 abstract class Method : Member
 {
     @property
+    abstract const(Class)[] getParameterClasses() const;
+
+    @property
     abstract const(TypeInfo)[] getParameterTypes() const;
 
     @property

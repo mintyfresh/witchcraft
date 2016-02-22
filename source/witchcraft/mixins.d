@@ -288,6 +288,21 @@ mixin template WitchcraftConstructor()
             return values;
         }
 
+        override const(Class)[] getParameterClasses() const
+        {
+            auto parameterClasses = new Class[Parameters!method.length];
+
+            foreach(index, Parameter; Parameters!method)
+            {
+                static if(__traits(hasMember, Parameter, "getClass"))
+                {
+                    parameterClasses[index] = Parameter.getClass;
+                }
+            }
+
+            return parameterClasses;
+        }
+
         @property
         override const(TypeInfo)[] getParameterTypes() const
         {
@@ -439,13 +454,26 @@ mixin template WitchcraftMethod()
             return values;
         }
 
-        @property
         string getName() const
         {
             return name;
         }
 
-        @property
+        override const(Class)[] getParameterClasses() const
+        {
+            auto parameterClasses = new Class[Parameters!method.length];
+
+            foreach(index, Parameter; Parameters!method)
+            {
+                static if(__traits(hasMember, Parameter, "getClass"))
+                {
+                    parameterClasses[index] = Parameter.getClass;
+                }
+            }
+
+            return parameterClasses;
+        }
+
         override const(TypeInfo)[] getParameterTypes() const
         {
             auto parameterTypes = new TypeInfo[Parameters!method.length];
