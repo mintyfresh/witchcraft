@@ -41,10 +41,24 @@ class Constructor : Member
         return "__ctor";
     }
 
+    /++
+     + Returns an array of `Class` objects representing this constructor's
+     + parameter types. If a parameter does not have an associated reflective
+     + type, its value is `null`.
+     +
+     + Returns:
+     +   This constructors's parameter classes.
+     +
+     + See_Also:
+     +   getParameterTypes
+     ++/
     abstract const(Class)[] getParameterClasses() const;
 
     /++
      + Returns an array representing the constructor's parameter types.
+     +
+     + Returns:
+     +   This constructor's parameter types.
      ++/
     abstract const(TypeInfo)[] getParameterTypes() const;
 
