@@ -13,6 +13,7 @@ mixin template WitchcraftMethod()
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, name)[overload]);
+        alias Return = ReturnType!method;
 
     public:
         @property
@@ -33,6 +34,11 @@ mixin template WitchcraftMethod()
         override string getName() const
         {
             return name;
+        }
+
+        override string getFullName() const
+        {
+            return fullyQualifiedName!method;
         }
 
         override const(Class)[] getParameterClasses() const
@@ -63,7 +69,7 @@ mixin template WitchcraftMethod()
         }
 
         @property
-        override const(Class) getDeclaringClass() const
+        override const(Aggregate) getDeclaringClass() const
         {
             return T.classof;
         }
@@ -83,8 +89,6 @@ mixin template WitchcraftMethod()
         @property
         override const(Class) getReturnClass() const
         {
-            alias Return = ReturnType!method;
-
             static if(__traits(hasMember, Return, "classof"))
             {
                 return Return.classof;
@@ -98,17 +102,16 @@ mixin template WitchcraftMethod()
         @property
         override const(TypeInfo) getReturnType() const
         {
-            alias Return = ReturnType!method;
-
             return typeid(Return);
         }
 
-        override Variant invoke(Object instance, Variant[] arguments...) const
+        override Variant invoke(Variant instance, Variant[] arguments...) const
         {
             import std.algorithm, std.conv, std.range, std.string;
 
             alias Params = Parameters!method;
 
+            auto i = instance.get!T;
             enum invokeString = iota(0, Params.length)
                 .map!(i => "arguments[%s].get!(Params[%s])".format(i, i))
                 .joiner
@@ -116,13 +119,13 @@ mixin template WitchcraftMethod()
 
             static if(!is(ReturnType!method == void))
             {
-                mixin("auto result = __traits(getOverloads, cast(T) instance, name)[overload](" ~ invokeString ~ ");");
+                mixin("auto result = __traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
 
                 return Variant(result);
             }
             else
             {
-                mixin("__traits(getOverloads, cast(T) instance, name)[overload](" ~ invokeString ~ ");");
+                mixin("__traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
 
                 return Variant(null);
             }

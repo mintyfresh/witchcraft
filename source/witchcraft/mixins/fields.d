@@ -6,19 +6,26 @@ mixin template WitchcraftField()
     import witchcraft;
 
     import std.meta;
+    import std.traits;
     import std.variant;
 
     static class FieldImpl(T, string name) : Field
     {
-        override Variant get(Object instance) const
+    private:
+        alias member = Alias!(__traits(getMember, T, name));
+        alias Type   = typeof(member);
+
+    public:
+        override Variant get(Variant instance) const
         {
-            return Variant(__traits(getMember, cast(T) instance, name));
+            auto i = instance.get!T;
+
+            return Variant(__traits(getMember, i, name));
         }
 
         @property
         override const(Attribute)[] getAttributes() const
         {
-            alias member = Alias!(__traits(getMember, T, name));
             alias attributes = AliasSeq!(__traits(getAttributes, member));
 
             auto values = new Attribute[attributes.length];
@@ -32,7 +39,7 @@ mixin template WitchcraftField()
         }
 
         @property
-        override const(Class) getDeclaringClass() const
+        override const(Aggregate) getDeclaringClass() const
         {
             return T.classof;
         }
@@ -50,16 +57,20 @@ mixin template WitchcraftField()
         }
 
         @property
+        override string getFullName() const
+        {
+            return fullyQualifiedName!member;
+        }
+
+        @property
         override string getProtection() const
         {
             return __traits(getProtection, __traits(getMember, T, name));
         }
 
         @property
-        override const(Class) getValueClass() const
+        override const(Aggregate) getValueClass() const
         {
-            alias Type = typeof(__traits(getMember, T, name));
-
             static if(__traits(hasMember, Type, "classof"))
             {
                 return Type.classof;
@@ -73,8 +84,6 @@ mixin template WitchcraftField()
         @property
         override const(TypeInfo) getValueType() const
         {
-            alias Type = typeof(__traits(getMember, T, name));
-
             return typeid(Type);
         }
 
@@ -86,11 +95,11 @@ mixin template WitchcraftField()
             });
         }
 
-        override void set(Object instance, Variant value) const
+        override void set(Variant instance, Variant value) const
         {
-            alias Type = typeof(__traits(getMember, T, name));
+            auto i = instance.get!T;
 
-            __traits(getMember, cast(T) instance, name) = value.get!Type;
+            __traits(getMember, i, name) = value.get!Type;
         }
     }
 }

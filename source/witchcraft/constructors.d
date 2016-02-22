@@ -15,13 +15,13 @@ class Constructor : Member
      + Invokes the constructor, passing in arguments as variant types.
      + The result is returned as an Object type.
      ++/
-    abstract Object create(Variant[] arguments...) const;
+    abstract Variant create(Variant[] arguments...) const;
 
     /++
      + Ditto, but accepts arguments of any type, and permits the result to also
      + be cast to a type specified by template argument.
      ++/
-    T create(T : Object = Object, TList...)(TList arguments) const
+    T create(T, TList...)(TList arguments) const
     {
         auto values = new Variant[TList.length];
 
@@ -30,7 +30,7 @@ class Constructor : Member
             values[index] = Variant(argument);
         }
 
-        return cast(T) this.create(values);
+        return this.create(values).get!T;
     }
 
     /++

@@ -100,15 +100,6 @@ abstract class Aggregate : Type
      ++/
     abstract const(Field)[] getFields() const;
 
-    /++
-     + Returns the fully-qualified name of the class, including the package and
-     + module name, and any types that might enclose it.
-     +
-     + Returns:
-     +   The fully-qualified name of this class.
-     ++/
-    abstract string getFullName() const;
-
     final const(Method) getMethod(string name, TypeInfo[] parameterTypes...) const
     {
         foreach(method; getMethods(name))

@@ -67,7 +67,7 @@ abstract class Method : Member
      + Returns:
      +   The result of the method call.
      ++/
-    abstract Variant invoke(Object instance, Variant[] arguments...) const;
+    abstract Variant invoke(Variant instance, Variant[] arguments...) const;
 
     /++
      + Ditto, but arguments are taken as variadic arguments.
@@ -81,7 +81,7 @@ abstract class Method : Member
      + Returns:
      +   The result of the method call.
      ++/
-    T invoke(T = Variant, TList...)(Object instance, TList arguments) const
+    T invoke(T = Variant, O, TList...)(O instance, TList arguments) const
     {
         auto values = new Variant[TList.length];
 
@@ -90,7 +90,7 @@ abstract class Method : Member
             values[index] = Variant(argument);
         }
 
-        auto result = this.invoke(instance, values);
+        auto result = this.invoke(Variant(instance), values);
 
         static if(is(T == Variant))
         {

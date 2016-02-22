@@ -76,7 +76,7 @@ abstract class Member
      +   The declaring element's class.
      ++/
     @property
-    abstract const(Class) getDeclaringClass() const;
+    abstract const(Aggregate) getDeclaringClass() const;
 
     /++
      + Returns a `TypeInfo` object for the declaring element.
@@ -94,10 +94,19 @@ abstract class Member
      + The name of the element.
      +
      + Returns:
-     +   The name of the element.
+     +   The name of this element.
      ++/
     @property
     abstract string getName() const;
+
+    /++
+     + Returns the fully-qualified name of the element, including the package
+     + and module name, and any types that might enclose it.
+     +
+     + Returns:
+     +   The fully-qualified name of this element.
+     ++/
+    abstract string getFullName() const;
 
     /++
      + Returns a string that represents this element's declared protection.

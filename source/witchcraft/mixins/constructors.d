@@ -18,9 +18,8 @@ mixin template WitchcraftConstructor()
         alias method = Alias!(__traits(getOverloads, T, "__ctor")[overload]);
 
     public:
-        override Object create(Variant[] arguments...) const
+        override Variant create(Variant[] arguments...) const
         {
-
             alias Params = Parameters!method;
 
             enum invokeString = iota(0, Params.length)
@@ -28,7 +27,18 @@ mixin template WitchcraftConstructor()
                 .joiner
                 .text;
 
-            mixin("return new T(" ~ invokeString ~ ");");
+            static if(is(T == class))
+            {
+                mixin("return Variant(new T(" ~ invokeString ~ "));");
+            }
+            else static if(is(T == struct))
+            {
+                mixin("return Variant(T(" ~ invokeString ~ "));");
+            }
+            else
+            {
+                static assert(0);
+            }
         }
 
         @property
@@ -46,16 +56,19 @@ mixin template WitchcraftConstructor()
             return values;
         }
 
-        @property
-        override const(Class) getDeclaringClass() const
+        override const(Aggregate) getDeclaringClass() const
         {
             return T.classof;
         }
 
-        @property
         override const(TypeInfo) getDeclaringType() const
         {
             return typeid(T);
+        }
+
+        override string getFullName() const
+        {
+            return fullyQualifiedName!method;
         }
 
         override const(Class)[] getParameterClasses() const

@@ -9,15 +9,15 @@ import std.variant;
 
 abstract class Field : Member
 {
-    abstract Variant get(Object instance) const;
+    abstract Variant get(Variant instance) const;
 
-    T get(T)(Object instance) const
+    T get(T, O)(O instance) const
     {
-        return this.get(instance).get!T;
+        return this.get(Variant(instance)).get!T;
     }
 
     @property
-    abstract const(Class) getValueClass() const;
+    abstract const(Aggregate) getValueClass() const;
 
     @property
     abstract const(TypeInfo) getValueType() const;
@@ -25,11 +25,11 @@ abstract class Field : Member
     @property
     abstract bool isStatic() const;
 
-    abstract void set(Object instance, Variant value) const;
+    abstract void set(Variant instance, Variant value) const;
 
-    void set(T)(Object instance, T value) const
+    void set(T, O)(O instance, T value) const
     {
-        return this.set(instance, Variant(value));
+        return this.set(Variant(instance), Variant(value));
     }
 
     override string toString() const

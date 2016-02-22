@@ -5,35 +5,58 @@ mixin template Witchcraft()
 {
     import witchcraft;
 
-    private static Class __classinfoext;
-
-    @property
-    static Class classof()
+    static if(is(typeof(this) == class))
     {
-        mixin WitchcraftClass;
-        mixin WitchcraftAttribute;
-        mixin WitchcraftField;
-        mixin WitchcraftMethod;
-        mixin WitchcraftConstructor;
-
-        if(__classinfoext is null)
-        {
-            __classinfoext = new ClassImpl!(typeof(this));
-        }
-
-        return __classinfoext;
+        private static Class __typeinfoext;
+    }
+    else static if(is(typeof(this) == struct))
+    {
+        private static Struct __typeinfoext;
+    }
+    else
+    {
+        static assert(0);
     }
 
-    static if(__traits(hasMember, typeof(super), "getClass"))
+    @property
+    static typeof(__typeinfoext) classof()
     {
-        override Class getClass()
+        mixin WitchcraftAttribute;
+        mixin WitchcraftClass;
+        mixin WitchcraftConstructor;
+        mixin WitchcraftField;
+        mixin WitchcraftMethod;
+        mixin WitchcraftStruct;
+
+        if(__typeinfoext is null)
+        {
+            static if(is(typeof(this) == class))
+            {
+                __typeinfoext = new ClassImpl!(typeof(this));
+            }
+            else static if(is(typeof(this) == struct))
+            {
+                __typeinfoext = new StructImpl!(typeof(this));
+            }
+            else
+            {
+                static assert(0);
+            }
+        }
+
+        return __typeinfoext;
+    }
+
+    static if(__traits(compiles, typeof(super).classof))
+    {
+        override typeof(__typeinfoext) getClass()
         {
             return typeof(this).classof;
         }
     }
     else
     {
-        Class getClass()
+        typeof(__typeinfoext) getClass()
         {
             return typeof(this).classof;
         }
