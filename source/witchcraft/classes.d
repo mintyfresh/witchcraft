@@ -11,7 +11,7 @@ import std.traits;
  + Represents and grants access to a class's attributes, fields, methods,
  + and constructors.
  ++/
-abstract class Class : Member
+abstract class Class : Member, Aggregate
 {
     /++
      + Creates a new instance of the class, provided it has a default or
@@ -36,50 +36,6 @@ abstract class Class : Member
     T create(T : Object)() const
     {
         return cast(T) this.create;
-    }
-
-    /++
-     + Looks up and returns a constructor with a parameter list that exactly
-     + matches the given array of types.
-     +
-     + Params:
-     +   parameterTypes = A parameter list the constructor must exactly match.
-     +
-     + Returns:
-     +   The constructor object, or null if no such constructor exists.
-     ++/
-    const(Constructor) getConstructor(TypeInfo[] parameterTypes...) const
-    {
-        foreach(constructor; getConstructors)
-        {
-            if(constructor.getParameterTypes == parameterTypes)
-            {
-                return constructor;
-            }
-        }
-
-        return null;
-    }
-
-    /++
-     + Ditto, but accepts types given by variadic template arguments.
-     +
-     + Params:
-     +   TList = A list of types the constructor must exactly match.
-     +
-     + Returns:
-     +   The constructor object, or null if no such constructor exists.
-     ++/
-    const(Constructor) getConstructor(TList...)() const
-    {
-        auto types = new TypeInfo[TList.length];
-
-        foreach(index, type; TList)
-        {
-            types[index] = typeid(type);
-        }
-
-        return this.getConstructor(types);
     }
 
     /++
@@ -109,7 +65,7 @@ abstract class Class : Member
      + Returns:
      +   The field object, or null if no such field exists.
      ++/
-    const(Field) getField(string name) const
+    override const(Field) getField(string name) const
     {
         auto field = getLocalField(name);
 
@@ -135,7 +91,7 @@ abstract class Class : Member
      + Returns:
      +   An array of all known field objects belonging to this class.
      ++/
-    const(Field)[] getFields() const
+    override const(Field)[] getFields() const
     {
         if(getSuperClass !is null)
         {
@@ -146,34 +102,6 @@ abstract class Class : Member
             return getLocalFields;
         }
     }
-
-    /++
-     + Returns an array of names of all fields defined by this class and
-     + classes that it inherits from. This only extends to super classes that
-     + also use `Witchcraft`.
-     +
-     + This method is equivalent to mapping the result of `getFields()` to the
-     + names of the fields in the resulting array.
-     +
-     + Return:
-     +   An array of names of all known fields.
-     +
-     + See_Also:
-     +   getFields
-     ++/
-    string[] getFieldNames() const
-    {
-        return getFields.map!"a.getName".array;
-    }
-
-    /++
-     + Returns the fully-qualified name of the class, including the package and
-     + module name, and any types that might enclose it.
-     +
-     + Returns:
-     +   The fully-qualified name of this class.
-     ++/
-    abstract string getFullName() const;
 
     abstract const(Field) getLocalField(string name) const;
 
@@ -226,48 +154,6 @@ abstract class Class : Member
     abstract const(Method)[] getLocalMethods() const;
 
     abstract const(Method)[] getLocalMethods(string name) const;
-
-    const(Method) getMethod(string name, TypeInfo[] parameterTypes...) const
-    {
-        auto method = getLocalMethod(name, parameterTypes);
-
-        if(method !is null)
-        {
-            return method;
-        }
-        else if(getSuperClass !is null)
-        {
-            return getSuperClass.getMethod(name, parameterTypes);
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    const(Method) getMethod(TList...)(string name) const
-    {
-        auto types = new TypeInfo[TList.length];
-
-        foreach(index, type; TList)
-        {
-            types[index] = typeid(type);
-        }
-
-        return this.getMethod(name, types);
-    }
-
-    string[] getMethodNames() const
-    {
-        if(getSuperClass !is null)
-        {
-            return getSuperClass.getMethodNames ~ getLocalMethodNames;
-        }
-        else
-        {
-            return getLocalMethodNames;
-        }
-    }
 
     const(Method)[] getMethods() const
     {

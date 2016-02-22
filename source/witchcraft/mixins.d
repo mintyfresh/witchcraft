@@ -114,7 +114,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        override string getFullName() const
+        string getFullName() const
         {
             return T.classinfo.name;
         }
