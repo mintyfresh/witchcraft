@@ -6,7 +6,7 @@ import witchcraft;
 import std.algorithm;
 import std.array;
 
-interface Aggregate : Member
+abstract class Aggregate : Type
 {
     /++
      + Looks up and returns a constructor with a parameter list that exactly
@@ -62,7 +62,7 @@ interface Aggregate : Member
      + Returns:
      +   And array of all constructors on the aggregate type.
      ++/
-    const(Constructor)[] getConstructors() const;
+    abstract const(Constructor)[] getConstructors() const;
 
     /++
      + Looks up a field by name.
@@ -73,7 +73,7 @@ interface Aggregate : Member
      + Returns:
      +   The field object, or null if no such field exists.
      ++/
-    const(Field) getField(string name) const;
+    abstract const(Field) getField(string name) const;
 
     /++
      + Returns an array of the names of all fields defined by this type.
@@ -98,7 +98,7 @@ interface Aggregate : Member
      + Returns:
      +   All fields objects on this type.
      ++/
-    const(Field)[] getFields() const;
+    abstract const(Field)[] getFields() const;
 
     /++
      + Returns the fully-qualified name of the class, including the package and
@@ -142,4 +142,58 @@ interface Aggregate : Member
     const(Method)[] getMethods() const;
 
     const(Method)[] getMethods(string name) const;
+
+    @property
+    final override bool isAggregate() const
+    {
+        return true;
+    }
+
+    @property
+    final override bool isArray() const
+    {
+        return false;
+    }
+
+    @property
+    final override bool isAssocArray() const
+    {
+        return false;
+    }
+
+    @property
+    final override bool isBuiltIn() const
+    {
+        return false;
+    }
+
+    @property
+    final override bool isInterface() const
+    {
+        return false;
+    }
+
+    @property
+    final override bool isPointer() const
+    {
+        return false;
+    }
+
+    @property
+    final override bool isPrimitive() const
+    {
+        return false;
+    }
+
+    @property
+    final override bool isStaticArray() const
+    {
+        return false;
+    }
+
+    @property
+    final override bool isString() const
+    {
+        return false;
+    }
 }

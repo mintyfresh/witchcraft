@@ -114,7 +114,35 @@ mixin template WitchcraftClass()
             }
         }
 
-        string getFullName() const
+        const(Class) getDeclaringClass() const
+        {
+            alias Parent = Alias!(__traits(parent, T));
+
+            static if(__traits(hasMember, T, "classof"))
+            {
+                return T.classof;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        const(TypeInfo) getDeclaringType() const
+        {
+            alias Parent = Alias!(__traits(parent, T));
+
+            static if(__traits(compiles, typeid(Parent)))
+            {
+                return typeid(Parent);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        override string getFullName() const
         {
             return T.classinfo.name;
         }
@@ -153,32 +181,9 @@ mixin template WitchcraftClass()
             return T.stringof;
         }
 
-        const(Class) getDeclaringClass() const
+        string getProtection() const
         {
-            alias Parent = Alias!(__traits(parent, T));
-
-            static if(__traits(hasMember, T, "classof"))
-            {
-                return T.classof;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        const(TypeInfo) getDeclaringType() const
-        {
-            alias Parent = Alias!(__traits(parent, T));
-
-            static if(__traits(compiles, typeid(Parent)))
-            {
-                return typeid(Parent);
-            }
-            else
-            {
-                return null;
-            }
+            return __traits(getProtection, T);
         }
 
         override const(Class) getSuperClass() const
@@ -213,9 +218,9 @@ mixin template WitchcraftClass()
             }
         }
 
-        string getProtection() const
+        override const(TypeInfo) getTypeInfo() const
         {
-            return __traits(getProtection, T);
+            return T.classinfo;
         }
 
         @property

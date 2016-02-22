@@ -11,7 +11,7 @@ import std.traits;
  + Represents and grants access to a class's attributes, fields, methods,
  + and constructors.
  ++/
-abstract class Class : Member, Aggregate
+abstract class Class : Aggregate
 {
     /++
      + Creates a new instance of the class, provided it has a default or
@@ -53,7 +53,7 @@ abstract class Class : Member, Aggregate
      + See_Also:
      +   create
      ++/
-    abstract const(Constructor)[] getConstructors() const;
+    abstract override const(Constructor)[] getConstructors() const;
 
     /++
      + Looks up a field by name, searching this class, and each of its super
@@ -155,7 +155,7 @@ abstract class Class : Member, Aggregate
 
     abstract const(Method)[] getLocalMethods(string name) const;
 
-    const(Method)[] getMethods() const
+    override const(Method)[] getMethods() const
     {
         if(getSuperClass !is null)
         {
@@ -167,7 +167,7 @@ abstract class Class : Member, Aggregate
         }
     }
 
-    const(Method)[] getMethods(string name) const
+    override const(Method)[] getMethods(string name) const
     {
         if(getSuperClass !is null)
         {
@@ -189,9 +189,21 @@ abstract class Class : Member, Aggregate
     @property
     abstract bool isAbstract() const;
 
+    @property
+    final override bool isClass() const
+    {
+        return true;
+    }
+
     /++
      + Checks if this class is final.
      ++/
     @property
     abstract bool isFinal() const;
+
+    @property
+    final override bool isStruct() const
+    {
+        return false;
+    }
 }

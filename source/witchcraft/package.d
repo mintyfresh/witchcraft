@@ -9,3 +9,4 @@ public import witchcraft.fields;
 public import witchcraft.members;
 public import witchcraft.methods;
 public import witchcraft.mixins;
+public import witchcraft.types;
