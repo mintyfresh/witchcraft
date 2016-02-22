@@ -139,9 +139,9 @@ abstract class Aggregate : Type
         return getMethods.map!"a.getName".array;
     }
 
-    const(Method)[] getMethods() const;
+    abstract const(Method)[] getMethods() const;
 
-    const(Method)[] getMethods(string name) const;
+    abstract const(Method)[] getMethods(string name) const;
 
     @property
     final override bool isAggregate() const

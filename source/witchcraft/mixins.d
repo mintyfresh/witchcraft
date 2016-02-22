@@ -15,6 +15,10 @@ mixin template Witchcraft()
     static Class classof()
     {
         mixin WitchcraftClass;
+        mixin WitchcraftAttribute;
+        mixin WitchcraftField;
+        mixin WitchcraftMethod;
+        mixin WitchcraftConstructor;
 
         if(__classinfoext is null)
         {
@@ -49,16 +53,11 @@ mixin template WitchcraftClass()
         Method[][string] _methods;
 
     public:
-        mixin WitchcraftAttribute;
-        mixin WitchcraftConstructor;
-        mixin WitchcraftField;
-        mixin WitchcraftMethod;
-
         this()
         {
             foreach(name; FieldNameTuple!T)
             {
-                _fields[name] = new FieldImpl!name;
+                _fields[name] = new FieldImpl!(T, name);
             }
 
             foreach(name; __traits(derivedMembers, T))
@@ -69,7 +68,7 @@ mixin template WitchcraftClass()
                     {
                         foreach(index, overload; __traits(getOverloads, T, name))
                         {
-                            _methods[name] ~= new MethodImpl!(name, index);
+                            _methods[name] ~= new MethodImpl!(T, name, index);
                         }
                     }
                 }
@@ -82,7 +81,7 @@ mixin template WitchcraftClass()
             return T.classinfo.create;
         }
 
-        const(Attribute)[] getAttributes() const
+        override const(Attribute)[] getAttributes() const
         {
             const(Attribute)[] attributes;
 
@@ -103,7 +102,7 @@ mixin template WitchcraftClass()
 
                 foreach(index, constructor; constructors)
                 {
-                    values[index] = new ConstructorImpl!index;
+                    values[index] = new ConstructorImpl!(T, index);
                 }
 
                 return values;
@@ -114,7 +113,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        const(Class) getDeclaringClass() const
+        override const(Class) getDeclaringClass() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -128,7 +127,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        const(TypeInfo) getDeclaringType() const
+        override const(TypeInfo) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -176,12 +175,12 @@ mixin template WitchcraftClass()
             return methods;
         }
 
-        string getName() const
+        override string getName() const
         {
             return T.stringof;
         }
 
-        string getProtection() const
+        override string getProtection() const
         {
             return __traits(getProtection, T);
         }
@@ -305,7 +304,7 @@ mixin template WitchcraftAttribute()
 
 mixin template WitchcraftConstructor()
 {
-    static class ConstructorImpl(size_t overload) : Constructor
+    static class ConstructorImpl(T, size_t overload) : Constructor
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, "__ctor")[overload]);
@@ -326,7 +325,7 @@ mixin template WitchcraftConstructor()
         }
 
         @property
-        const(Attribute)[] getAttributes() const
+        override const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, method));
 
@@ -338,6 +337,18 @@ mixin template WitchcraftConstructor()
             }
 
             return values;
+        }
+
+        @property
+        override const(Class) getDeclaringClass() const
+        {
+            return T.classof;
+        }
+
+        @property
+        override const(TypeInfo) getDeclaringType() const
+        {
+            return typeid(T);
         }
 
         override const(Class)[] getParameterClasses() const
@@ -369,19 +380,7 @@ mixin template WitchcraftConstructor()
         }
 
         @property
-        const(Class) getDeclaringClass() const
-        {
-            return T.classof;
-        }
-
-        @property
-        const(TypeInfo) getDeclaringType() const
-        {
-            return typeid(T);
-        }
-
-        @property
-        string getProtection() const
+        override string getProtection() const
         {
             return __traits(getProtection, method);
         }
@@ -396,7 +395,7 @@ mixin template WitchcraftConstructor()
 
 mixin template WitchcraftField()
 {
-    static class FieldImpl(string name) : Field
+    static class FieldImpl(T, string name) : Field
     {
         override Variant get(Object instance) const
         {
@@ -404,7 +403,7 @@ mixin template WitchcraftField()
         }
 
         @property
-        const(Attribute)[] getAttributes() const
+        override const(Attribute)[] getAttributes() const
         {
             alias member = Alias!(__traits(getMember, T, name));
             alias attributes = AliasSeq!(__traits(getAttributes, member));
@@ -420,25 +419,25 @@ mixin template WitchcraftField()
         }
 
         @property
-        string getName() const
-        {
-            return name;
-        }
-
-        @property
-        const(Class) getDeclaringClass() const
+        override const(Class) getDeclaringClass() const
         {
             return T.classof;
         }
 
         @property
-        const(TypeInfo) getDeclaringType() const
+        override const(TypeInfo) getDeclaringType() const
         {
             return typeid(T);
         }
 
         @property
-        string getProtection() const
+        override string getName() const
+        {
+            return name;
+        }
+
+        @property
+        override string getProtection() const
         {
             return __traits(getProtection, __traits(getMember, T, name));
         }
@@ -485,14 +484,14 @@ mixin template WitchcraftField()
 
 mixin template WitchcraftMethod()
 {
-    static class MethodImpl(string name, size_t overload) : Method
+    static class MethodImpl(T, string name, size_t overload) : Method
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, name)[overload]);
 
     public:
         @property
-        const(Attribute)[] getAttributes() const
+        override const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, method));
 
@@ -506,7 +505,7 @@ mixin template WitchcraftMethod()
             return values;
         }
 
-        string getName() const
+        override string getName() const
         {
             return name;
         }
@@ -539,19 +538,19 @@ mixin template WitchcraftMethod()
         }
 
         @property
-        const(Class) getDeclaringClass() const
+        override const(Class) getDeclaringClass() const
         {
             return T.classof;
         }
 
         @property
-        const(TypeInfo) getDeclaringType() const
+        override const(TypeInfo) getDeclaringType() const
         {
             return typeid(T);
         }
 
         @property
-        string getProtection() const
+        override string getProtection() const
         {
             return __traits(getProtection, method);
         }
