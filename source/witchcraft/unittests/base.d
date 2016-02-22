@@ -3,47 +3,50 @@ module witchcraft.unittests.base;
 
 import witchcraft;
 
-import std.algorithm;
-import std.array;
-
-struct Entity
+version(unittest)
 {
-}
+    import std.algorithm;
+    import std.array;
 
-struct Column
-{
-    string name;
-}
-
-@Entity
-class User
-{
-    mixin Witchcraft;
-
-    @Column
-    string username;
-
-    @Column("pass_word")
-    string password;
-
-    string email;
-
-    ulong createdAt;
-    ulong updatedAt;
-
-    this()
+    struct Entity
     {
     }
 
-    this(string email)
+    struct Column
     {
-        this.email = email;
+        string name;
     }
 
-    void updateEmail(string email)
+    @Entity
+    class User
     {
-        this.email = email;
-        updatedAt += 1;
+        mixin Witchcraft;
+
+        @Column
+        string username;
+
+        @Column("pass_word")
+        string password;
+
+        string email;
+
+        ulong createdAt;
+        ulong updatedAt;
+
+        this()
+        {
+        }
+
+        this(string email)
+        {
+            this.email = email;
+        }
+
+        void updateEmail(string email)
+        {
+            this.email = email;
+            updatedAt += 1;
+        }
     }
 }
 
