@@ -18,11 +18,34 @@ abstract class Aggregate : Type
      + Returns:
      +   The constructor object, or null if no such constructor exists.
      ++/
-    final const(Constructor) getConstructor(TypeInfo[] parameterTypes...) const
+    final const(Constructor) getConstructor(Type[] parameterTypes...) const
     {
         foreach(constructor; getConstructors)
         {
             if(constructor.getParameterTypes == parameterTypes)
+            {
+                return constructor;
+            }
+        }
+
+        return null;
+    }
+
+    /++
+     + Looks up and returns a constructor with a parameter list that exactly
+     + matches the given array of types.
+     +
+     + Params:
+     +   parameterTypeInfos = A parameter list the constructor must exactly match.
+     +
+     + Returns:
+     +   The constructor object, or null if no such constructor exists.
+     ++/
+    final const(Constructor) getConstructor(TypeInfo[] parameterTypeInfos) const
+    {
+        foreach(constructor; getConstructors)
+        {
+            if(constructor.getParameterTypeInfos == parameterTypeInfos)
             {
                 return constructor;
             }
@@ -113,7 +136,7 @@ abstract class Aggregate : Type
         return null;
     }
 
-    final const(Method) getMethod(string name, TypeInfo[] parameterTypeInfos...) const
+    final const(Method) getMethod(string name, TypeInfo[] parameterTypeInfos) const
     {
         foreach(method; getMethods(name))
         {

@@ -30,6 +30,34 @@ mixin template WitchcraftMethod()
             return values;
         }
 
+        override const(Type) getDeclaringType() const
+        {
+            alias Parent = Alias!(__traits(parent, method));
+
+            static if(__traits(hasMember, Parent, "classof"))
+            {
+                return Parent.classof;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        override const(TypeInfo) getDeclaringTypeInfo() const
+        {
+            alias Parent = Alias!(__traits(parent, method));
+
+            static if(__traits(compiles, typeid(Parent)))
+            {
+                return typeid(Parent);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
         override string getName() const
         {
             return name;
@@ -68,34 +96,6 @@ mixin template WitchcraftMethod()
             }
 
             return parameterTypeInfos;
-        }
-
-        override const(Type) getDeclaringType() const
-        {
-            alias Parent = Alias!(__traits(parent, method));
-
-            static if(__traits(hasMember, Parent, "classof"))
-            {
-                return Parent.classof;
-            }
-            else
-            {
-                return null;
-            }
-        }
-
-        override const(TypeInfo) getDeclaringTypeInfo() const
-        {
-            alias Parent = Alias!(__traits(parent, method));
-
-            static if(__traits(compiles, typeid(Parent)))
-            {
-                return typeid(Parent);
-            }
-            else
-            {
-                return null;
-            }
         }
 
         override string getProtection() const

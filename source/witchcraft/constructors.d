@@ -9,28 +9,24 @@ import std.variant;
 /++
  + Represents and grants access to a single constructor defined in a class.
  ++/
-class Constructor : Member
+class Constructor : Invocable
 {
     /++
      + Invokes the constructor, passing in arguments as variant types.
      + The result is returned as an Object type.
      ++/
-    abstract Variant create(Variant[] arguments...) const;
+    final Variant create(Variant[] arguments...) const
+    {
+        return this.invoke(null, arguments);
+    }
 
     /++
      + Ditto, but accepts arguments of any type, and permits the result to also
      + be cast to a type specified by template argument.
      ++/
-    T create(T, TList...)(TList arguments) const
+    final T create(T, TList...)(TList arguments) const
     {
-        auto values = new Variant[TList.length];
-
-        foreach(index, argument; arguments)
-        {
-            values[index] = Variant(argument);
-        }
-
-        return this.create(values).get!T;
+        return this.invoke(null, arguments).get!T;
     }
 
     /++
@@ -41,35 +37,8 @@ class Constructor : Member
         return "__ctor";
     }
 
-    /++
-     + Returns an array of `Class` objects representing this constructor's
-     + parameter types. If a parameter does not have an associated reflective
-     + type, its value is `null`.
-     +
-     + Returns:
-     +   This constructors's parameter classes.
-     +
-     + See_Also:
-     +   getParameterTypes
-     ++/
-    abstract const(Class)[] getParameterClasses() const;
-
-    /++
-     + Returns an array representing the constructor's parameter types.
-     +
-     + Returns:
-     +   This constructor's parameter types.
-     ++/
-    abstract const(TypeInfo)[] getParameterTypes() const;
-
-    /++
-     + Checks if the constructor accepts variable arguments.
-     ++/
-    @property
-    abstract bool isVarArgs() const;
-
     override string toString() const
     {
-        return "%s(%(%s, %))".format(getName, getParameterTypes);
+        return "%s(%(%s, %))".format(getName, getParameterTypeInfos);
     }
 }

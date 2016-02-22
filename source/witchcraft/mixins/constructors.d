@@ -16,32 +16,9 @@ mixin template WitchcraftConstructor()
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, "__ctor")[overload]);
+        alias Return = ReturnType!method;
 
     public:
-        override Variant create(Variant[] arguments...) const
-        {
-            alias Params = Parameters!method;
-
-            enum invokeString = iota(0, Params.length)
-                .map!(i => "arguments[%s].get!(Params[%s])".format(i, i))
-                .joiner
-                .text;
-
-            static if(is(T == class))
-            {
-                mixin("return Variant(new T(" ~ invokeString ~ "));");
-            }
-            else static if(is(T == struct))
-            {
-                mixin("return Variant(T(" ~ invokeString ~ "));");
-            }
-            else
-            {
-                static assert(0);
-            }
-        }
-
-        @property
         override const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, method));
@@ -89,38 +66,87 @@ mixin template WitchcraftConstructor()
             return fullyQualifiedName!method;
         }
 
-        override const(Class)[] getParameterClasses() const
+        override const(Type)[] getParameterTypes() const
         {
-            auto parameterClasses = new Class[Parameters!method.length];
+            auto parameterTypes = new Class[Parameters!method.length];
 
             foreach(index, Parameter; Parameters!method)
             {
                 static if(__traits(hasMember, Parameter, "classof"))
                 {
-                    parameterClasses[index] = Parameter.classof;
+                    parameterTypes[index] = Parameter.classof;
                 }
-            }
-
-            return parameterClasses;
-        }
-
-        @property
-        override const(TypeInfo)[] getParameterTypes() const
-        {
-            auto parameterTypes = new TypeInfo[Parameters!method.length];
-
-            foreach(index, Parameter; Parameters!method)
-            {
-                parameterTypes[index] = typeid(Parameter);
             }
 
             return parameterTypes;
         }
 
-        @property
+        override const(TypeInfo)[] getParameterTypeInfos() const
+        {
+            auto parameterTypeInfos = new TypeInfo[Parameters!method.length];
+
+            foreach(index, Parameter; Parameters!method)
+            {
+                static if(__traits(compiles, typeid(Parameter)))
+                {
+                    parameterTypeInfos[index] = typeid(Parameter);
+                }
+            }
+
+            return parameterTypeInfos;
+        }
+
         override string getProtection() const
         {
             return __traits(getProtection, method);
+        }
+
+        override const(Type) getReturnType() const
+        {
+            static if(__traits(hasMember, Return, "classof"))
+            {
+                return Return.classof;
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        @property
+        override const(TypeInfo) getReturnTypeInfo() const
+        {
+            static if(__traits(compiles, typeid(Return)))
+            {
+                return typeid(Return);
+            }
+            else
+            {
+                return null;
+            }
+        }
+
+        override Variant invoke(Variant instance, Variant[] arguments...) const
+        {
+            alias Params = Parameters!method;
+
+            enum invokeString = iota(0, Params.length)
+                .map!(i => "arguments[%s].get!(Params[%s])".format(i, i))
+                .joiner
+                .text;
+
+            static if(is(T == class))
+            {
+                mixin("return Variant(new T(" ~ invokeString ~ "));");
+            }
+            else static if(is(T == struct))
+            {
+                mixin("return Variant(T(" ~ invokeString ~ "));");
+            }
+            else
+            {
+                static assert(0);
+            }
         }
 
         @property
