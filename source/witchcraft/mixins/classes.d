@@ -8,14 +8,14 @@ mixin template WitchcraftClass()
     import std.meta;
     import std.traits;
 
-    static class ClassImpl(T) : Class
+    static class ClassMixin(T) : Class
     if(is(T == class))
     {
         this()
         {
             foreach(name; FieldNameTuple!T)
             {
-                _fields[name] = new FieldImpl!(T, name);
+                _fields[name] = new FieldMixin!(T, name);
             }
 
             foreach(name; __traits(derivedMembers, T))
@@ -26,7 +26,7 @@ mixin template WitchcraftClass()
                     {
                         foreach(index, overload; __traits(getOverloads, T, name))
                         {
-                            _methods[name] ~= new MethodImpl!(T, name, index);
+                            _methods[name] ~= new MethodMixin!(T, name, index);
                         }
                     }
                 }
@@ -61,7 +61,7 @@ mixin template WitchcraftClass()
 
                 foreach(index, constructor; constructors)
                 {
-                    values[index] = new ConstructorImpl!(T, index);
+                    values[index] = new ConstructorMixin!(T, index);
                 }
 
                 return values;
@@ -82,7 +82,22 @@ mixin template WitchcraftClass()
             }
             else
             {
-                return null;
+                static if(is(Parent == class))
+                {
+                    return new ClassImpl!Parent;
+                }
+                else static if(is(Parent == struct))
+                {
+                    return new StructImpl!Parent;
+                }
+                else static if(is(Parent == interface))
+                {
+                    return new InterfaceTypeImpl!Parent;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -149,11 +164,26 @@ mixin template WitchcraftClass()
             }
             else
             {
-                return null;
+                static if(is(Bases[0] == class))
+                {
+                    return new ClassImpl!(Bases[0]);
+                }
+                else static if(is(Bases[0] == struct))
+                {
+                    return new StructImpl!(Bases[0]);
+                }
+                else static if(is(Bases[0] == interface))
+                {
+                    return new InterfaceTypeImpl!(Bases[0]);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
-        override const(TypeInfo) getSuperType() const
+        override const(TypeInfo) getSuperTypeInfo() const
         {
             alias Bases = BaseClassesTuple!T;
 
@@ -176,6 +206,12 @@ mixin template WitchcraftClass()
         override bool isAbstract() const
         {
             return __traits(isAbstractClass, T);
+        }
+
+        @property
+        final bool isAccessible() const
+        {
+            return true;
         }
 
         @property

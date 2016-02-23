@@ -10,7 +10,7 @@ mixin template WitchcraftInterface()
         {
             foreach(name; FieldNameTuple!T)
             {
-                _fields[name] = new FieldImpl!(T, name);
+                _fields[name] = new FieldMixin!(T, name);
             }
 
             foreach(name; __traits(derivedMembers, T))
@@ -21,7 +21,7 @@ mixin template WitchcraftInterface()
                     {
                         foreach(index, overload; __traits(getOverloads, T, name))
                         {
-                            _methods[name] ~= new MethodImpl!(T, name, index);
+                            _methods[name] ~= new MethodMixin!(T, name, index);
                         }
                     }
                 }
@@ -51,7 +51,22 @@ mixin template WitchcraftInterface()
             }
             else
             {
-                return null;
+                static if(is(Parent == class))
+                {
+                    return new ClassImpl!Parent;
+                }
+                else static if(is(Parent == struct))
+                {
+                    return new StructImpl!Parent;
+                }
+                else static if(is(Parent == interface))
+                {
+                    return new InterfaceTypeImpl!Parent;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -116,6 +131,12 @@ mixin template WitchcraftInterface()
         const(TypeInfo) getTypeInfo() const
         {
             return typeid(T);
+        }
+
+        @property
+        final bool isAccessible() const
+        {
+            return true;
         }
     }
 }

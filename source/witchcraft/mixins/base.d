@@ -35,11 +35,11 @@ mixin template Witchcraft()
         {
             static if(is(typeof(this) == class))
             {
-                __typeinfoext = new ClassImpl!(typeof(this));
+                __typeinfoext = new ClassMixin!(typeof(this));
             }
             else static if(is(typeof(this) == struct))
             {
-                __typeinfoext = new StructImpl!(typeof(this));
+                __typeinfoext = new StructMixin!(typeof(this));
             }
             else static if(is(typeof(this) == interface))
             {

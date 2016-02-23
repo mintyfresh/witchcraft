@@ -10,9 +10,10 @@ mixin template WitchcraftConstructor()
     import std.meta;
     import std.range;
     import std.string;
+    import std.traits;
     import std.variant;
 
-    static class ConstructorImpl(T, size_t overload) : Constructor
+    static class ConstructorMixin(T, size_t overload) : Constructor
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, "__ctor")[overload]);
@@ -42,7 +43,22 @@ mixin template WitchcraftConstructor()
             }
             else
             {
-                return null;
+                static if(is(Parent == class))
+                {
+                    return new ClassImpl!Parent;
+                }
+                else static if(is(Parent == struct))
+                {
+                    return new StructImpl!Parent;
+                }
+                else static if(is(Parent == interface))
+                {
+                    return new InterfaceTypeImpl!Parent;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -74,6 +90,25 @@ mixin template WitchcraftConstructor()
                 static if(__traits(hasMember, Parameter, "classof"))
                 {
                     parameterTypes[index] = Parameter.classof;
+                }
+                else
+                {
+                    static if(is(Parameter == class))
+                    {
+                        parameterTypes[index] = new ClassImpl!Parameter;
+                    }
+                    else static if(is(Parameter == struct))
+                    {
+                        parameterTypes[index] = new StructImpl!Parameter;
+                    }
+                    else static if(is(Parameter == interface))
+                    {
+                        parameterTypes[index] = new InterfaceTypeImpl!Parameter;
+                    }
+                    else
+                    {
+                        parameterTypes[index] = null;
+                    }
                 }
             }
 
@@ -108,7 +143,22 @@ mixin template WitchcraftConstructor()
             }
             else
             {
-                return null;
+                static if(is(Return == class))
+                {
+                    return new ClassImpl!Return;
+                }
+                else static if(is(Return == struct))
+                {
+                    return new StructImpl!Return;
+                }
+                else static if(is(Return == interface))
+                {
+                    return new InterfaceTypeImpl!Return;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -146,6 +196,12 @@ mixin template WitchcraftConstructor()
             {
                 static assert(0);
             }
+        }
+
+        @property
+        final bool isAccessible() const
+        {
+            return true;
         }
 
         @property

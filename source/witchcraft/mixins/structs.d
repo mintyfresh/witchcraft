@@ -3,14 +3,14 @@ module witchcraft.mixins.structs;
 
 mixin template WitchcraftStruct()
 {
-    static class StructImpl(T) : Struct
+    static class StructMixin(T) : Struct
     if(is(T == struct))
     {
         this()
         {
             foreach(name; FieldNameTuple!T)
             {
-                _fields[name] = new FieldImpl!(T, name);
+                _fields[name] = new FieldMixin!(T, name);
             }
 
             foreach(name; __traits(derivedMembers, T))
@@ -21,7 +21,7 @@ mixin template WitchcraftStruct()
                     {
                         foreach(index, overload; __traits(getOverloads, T, name))
                         {
-                            _methods[name] ~= new MethodImpl!(T, name, index);
+                            _methods[name] ~= new MethodMixin!(T, name, index);
                         }
                     }
                 }
@@ -50,7 +50,7 @@ mixin template WitchcraftStruct()
 
                 foreach(index, constructor; constructors)
                 {
-                    values[index] = new ConstructorImpl!(T, index);
+                    values[index] = new ConstructorMixin!(T, index);
                 }
 
                 return values;
@@ -71,7 +71,22 @@ mixin template WitchcraftStruct()
             }
             else
             {
-                return null;
+                static if(is(Parent == class))
+                {
+                    return new ClassImpl!Parent;
+                }
+                else static if(is(Parent == struct))
+                {
+                    return new StructImpl!Parent;
+                }
+                else static if(is(Parent == interface))
+                {
+                    return new InterfaceTypeImpl!Parent;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -107,6 +122,12 @@ mixin template WitchcraftStruct()
         const(TypeInfo) getTypeInfo() const
         {
             return typeid(T);
+        }
+
+        @property
+        final bool isAccessible() const
+        {
+            return true;
         }
     }
 }

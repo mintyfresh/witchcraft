@@ -195,7 +195,7 @@ abstract class Class : Aggregate
 
     abstract const(Class) getSuperClass() const;
 
-    abstract const(TypeInfo) getSuperType() const;
+    abstract const(TypeInfo) getSuperTypeInfo() const;
 
     /++
      + Checks if this class is abstract.

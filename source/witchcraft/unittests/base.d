@@ -122,7 +122,7 @@ unittest
 
     /+ - Methods - +/
 
-    assert(class_.getMethodNames.isPermutation([ "getClass", "updateEmail" ]));
+    assert(class_.getLocalMethodNames.isPermutation([ "getClass", "updateEmail" ]));
 
     assert(class_.getMethods("updateEmail").empty == false);
     assert(class_.getMethod!(string)("updateEmail") !is null);

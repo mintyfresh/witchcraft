@@ -9,7 +9,7 @@ mixin template WitchcraftField()
     import std.traits;
     import std.variant;
 
-    static class FieldImpl(T, string name) : Field
+    static class FieldMixin(T, string name) : Field
     {
     private:
         alias member = Alias!(__traits(getMember, T, name));
@@ -45,7 +45,22 @@ mixin template WitchcraftField()
             }
             else
             {
-                return null;
+                static if(is(Parent == class))
+                {
+                    return new ClassImpl!Parent;
+                }
+                else static if(is(Parent == struct))
+                {
+                    return new StructImpl!Parent;
+                }
+                else static if(is(Parent == interface))
+                {
+                    return new InterfaceTypeImpl!Parent;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -87,13 +102,34 @@ mixin template WitchcraftField()
             }
             else
             {
-                return null;
+                static if(is(typeof(member) == class))
+                {
+                    return new ClassImpl!(typeof(member));
+                }
+                else static if(is(typeof(member) == struct))
+                {
+                    return new StructImpl!(typeof(member));
+                }
+                else static if(is(typeof(member) == interface))
+                {
+                    return new InterfaceTypeImpl!(typeof(member));
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
         override const(TypeInfo) getValueTypeInfo() const
         {
             return typeid(typeof(member));
+        }
+
+        @property
+        final bool isAccessible() const
+        {
+            return true;
         }
 
         @property

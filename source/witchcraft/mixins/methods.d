@@ -9,7 +9,7 @@ mixin template WitchcraftMethod()
     import std.traits;
     import std.variant;
 
-    static class MethodImpl(T, string name, size_t overload) : Method
+    static class MethodMixin(T, string name, size_t overload) : Method
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, name)[overload]);
@@ -39,7 +39,22 @@ mixin template WitchcraftMethod()
             }
             else
             {
-                return null;
+                static if(is(Parent == class))
+                {
+                    return new ClassImpl!Parent;
+                }
+                else static if(is(Parent == struct))
+                {
+                    return new StructImpl!Parent;
+                }
+                else static if(is(Parent == interface))
+                {
+                    return new InterfaceTypeImpl!Parent;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -77,6 +92,25 @@ mixin template WitchcraftMethod()
                 {
                     parameterTypes[index] = Parameter.classof;
                 }
+                else
+                {
+                    static if(is(Parameter == class))
+                    {
+                        parameterTypes[index] = new ClassImpl!Parameter;
+                    }
+                    else static if(is(Parameter == struct))
+                    {
+                        parameterTypes[index] = new StructImpl!Parameter;
+                    }
+                    else static if(is(Parameter == interface))
+                    {
+                        parameterTypes[index] = new InterfaceTypeImpl!Parameter;
+                    }
+                    else
+                    {
+                        parameterTypes[index] = null;
+                    }
+                }
             }
 
             return parameterTypes;
@@ -110,7 +144,22 @@ mixin template WitchcraftMethod()
             }
             else
             {
-                return null;
+                static if(is(Parent == class))
+                {
+                    return new ClassImpl!Parent;
+                }
+                else static if(is(Parent == struct))
+                {
+                    return new StructImpl!Parent;
+                }
+                else static if(is(Parent == interface))
+                {
+                    return new InterfaceTypeImpl!Parent;
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
@@ -151,6 +200,12 @@ mixin template WitchcraftMethod()
 
                 return Variant(null);
             }
+        }
+
+        @property
+        final bool isAccessible() const
+        {
+            return true;
         }
 
         @property

@@ -112,4 +112,7 @@ interface Member
      +   This element's protection.
      ++/
     string getProtection() const;
+
+    @property
+    bool isAccessible() const;
 }
