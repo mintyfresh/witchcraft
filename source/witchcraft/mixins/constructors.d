@@ -19,7 +19,7 @@ mixin template WitchcraftConstructor()
         alias Return = ReturnType!method;
 
     public:
-        override const(Attribute)[] getAttributes() const
+        const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, method));
 
@@ -33,7 +33,7 @@ mixin template WitchcraftConstructor()
             return values;
         }
 
-        override const(Type) getDeclaringType() const
+        const(Type) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, method));
 
@@ -47,7 +47,7 @@ mixin template WitchcraftConstructor()
             }
         }
 
-        override const(TypeInfo) getDeclaringTypeInfo() const
+        const(TypeInfo) getDeclaringTypeInfo() const
         {
             alias Parent = Alias!(__traits(parent, method));
 
@@ -61,14 +61,14 @@ mixin template WitchcraftConstructor()
             }
         }
 
-        override string getFullName() const
+        string getFullName() const
         {
             return fullyQualifiedName!method;
         }
 
-        override const(Type)[] getParameterTypes() const
+        const(Type)[] getParameterTypes() const
         {
-            auto parameterTypes = new Class[Parameters!method.length];
+            auto parameterTypes = new Type[Parameters!method.length];
 
             foreach(index, Parameter; Parameters!method)
             {
@@ -81,7 +81,7 @@ mixin template WitchcraftConstructor()
             return parameterTypes;
         }
 
-        override const(TypeInfo)[] getParameterTypeInfos() const
+        const(TypeInfo)[] getParameterTypeInfos() const
         {
             auto parameterTypeInfos = new TypeInfo[Parameters!method.length];
 
@@ -96,12 +96,12 @@ mixin template WitchcraftConstructor()
             return parameterTypeInfos;
         }
 
-        override string getProtection() const
+        string getProtection() const
         {
             return __traits(getProtection, method);
         }
 
-        override const(Type) getReturnType() const
+        const(Type) getReturnType() const
         {
             static if(__traits(hasMember, Return, "classof"))
             {
@@ -114,7 +114,7 @@ mixin template WitchcraftConstructor()
         }
 
         @property
-        override const(TypeInfo) getReturnTypeInfo() const
+        const(TypeInfo) getReturnTypeInfo() const
         {
             static if(__traits(compiles, typeid(Return)))
             {
@@ -126,7 +126,7 @@ mixin template WitchcraftConstructor()
             }
         }
 
-        override Variant invoke(Variant instance, Variant[] arguments...) const
+        Variant invoke(Variant instance, Variant[] arguments...) const
         {
             alias Params = Parameters!method;
 
@@ -150,7 +150,7 @@ mixin template WitchcraftConstructor()
         }
 
         @property
-        override bool isVarArgs() const
+        bool isVarArgs() const
         {
             return variadicFunctionStyle!method != Variadic.no;
         }

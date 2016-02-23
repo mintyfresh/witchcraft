@@ -9,7 +9,7 @@ import std.array;
 /++
  + Represents a set of behaviours common to reflective elements.
  ++/
-abstract class Member
+interface Member
 {
     /++
      + Returns an array of attributes that are attached to this element.
@@ -17,7 +17,7 @@ abstract class Member
      + Returns:
      +   An array of attributes.
      ++/
-    abstract const(Attribute)[] getAttributes() const;
+    const(Attribute)[] getAttributes() const;
 
     /++
      + Returns an array of attributes of the given class that are attched to
@@ -75,7 +75,7 @@ abstract class Member
      + Returns:
      +   The declaring element's type.
      ++/
-    abstract const(Type) getDeclaringType() const;
+    const(Type) getDeclaringType() const;
 
     /++
      + Returns a `TypeInfo` object for the declaring element.
@@ -86,7 +86,7 @@ abstract class Member
      + See_Also:
      +   getDeclaringClass
      ++/
-    abstract const(TypeInfo) getDeclaringTypeInfo() const;
+    const(TypeInfo) getDeclaringTypeInfo() const;
 
     /++
      + The name of the element.
@@ -94,7 +94,7 @@ abstract class Member
      + Returns:
      +   The name of this element.
      ++/
-    abstract string getName() const;
+    string getName() const;
 
     /++
      + Returns the fully-qualified name of the element, including the package
@@ -103,7 +103,7 @@ abstract class Member
      + Returns:
      +   The fully-qualified name of this element.
      ++/
-    abstract string getFullName() const;
+    string getFullName() const;
 
     /++
      + Returns a string that represents this element's declared protection.
@@ -111,5 +111,5 @@ abstract class Member
      + Returns:
      +   This element's protection.
      ++/
-    abstract string getProtection() const;
+    string getProtection() const;
 }

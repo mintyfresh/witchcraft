@@ -42,7 +42,7 @@ mixin template WitchcraftClass()
             return T.classinfo.create;
         }
 
-        override const(Attribute)[] getAttributes() const
+        const(Attribute)[] getAttributes() const
         {
             const(Attribute)[] attributes;
 
@@ -74,7 +74,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        override const(Type) getDeclaringType() const
+        const(Type) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -88,7 +88,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        override const(TypeInfo) getDeclaringTypeInfo() const
+        const(TypeInfo) getDeclaringTypeInfo() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -102,7 +102,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        override string getFullName() const
+        string getFullName() const
         {
             return fullyQualifiedName!T;
         }
@@ -136,12 +136,12 @@ mixin template WitchcraftClass()
             return methods;
         }
 
-        override string getName() const
+        string getName() const
         {
             return T.stringof;
         }
 
-        override string getProtection() const
+        string getProtection() const
         {
             return __traits(getProtection, T);
         }
@@ -178,7 +178,7 @@ mixin template WitchcraftClass()
             }
         }
 
-        override const(TypeInfo) getTypeInfo() const
+        const(TypeInfo) getTypeInfo() const
         {
             return T.classinfo;
         }

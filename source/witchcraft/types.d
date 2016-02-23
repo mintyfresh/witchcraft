@@ -3,40 +3,114 @@ module witchcraft.types;
 
 import witchcraft;
 
-abstract class Type : Member
+import std.algorithm;
+import std.array;
+
+interface Type : Member
 {
-    abstract const(TypeInfo) getTypeInfo() const;
+    /++
+     + Looks up a field by name.
+     +
+     + Params:
+     +   name = The name of the field.
+     +
+     + Returns:
+     +   The field object, or null if no such field exists.
+     ++/
+    const(Field) getField(string name) const;
+
+    final string[] getFieldNames() const
+    {
+        return getFields.map!"a.getName".array;
+    }
+
+    /++
+     + Returns an array of all fields defined by this type.
+     +
+     + Returns:
+     +   All fields objects on this type.
+     ++/
+    const(Field)[] getFields() const;
+
+    final const(Method) getMethod(string name, Type[] parameterTypes...) const
+    {
+        foreach(method; this.getMethods(name))
+        {
+            if(parameterTypes == method.getParameterTypes)
+            {
+                return method;
+            }
+        }
+
+        return null;
+    }
+
+    final const(Method) getMethod(string name, TypeInfo[] parameterTypeInfos) const
+    {
+        foreach(method; this.getMethods(name))
+        {
+            if(parameterTypeInfos == method.getParameterTypeInfos)
+            {
+                return method;
+            }
+        }
+
+        return null;
+    }
+
+    final const(Method) getMethod(TList...)(string name) const
+    {
+        auto parameterTypeInfos = new TypeInfo[TList.length];
+
+        foreach(index, Type; TList)
+        {
+            parameterTypeInfos[index] = typeid(Type);
+        }
+
+        return this.getMethod(name, parameterTypeInfos);
+    }
+
+    const(Method)[] getMethods() const;
+
+    final string[] getMethodNames() const
+    {
+        return getMethods.map!"a.getName".array;
+    }
+
+    const(Method)[] getMethods(string name) const;
+
+    const(TypeInfo) getTypeInfo() const;
 
     @property
-    abstract bool isAggregate() const;
+    bool isAggregate() const;
 
     @property
-    abstract bool isArray() const;
+    bool isArray() const;
 
     @property
-    abstract bool isAssocArray() const;
+    bool isAssocArray() const;
 
     @property
-    abstract bool isBuiltIn() const;
+    bool isBuiltIn() const;
 
     @property
-    abstract bool isClass() const;
+    bool isClass() const;
 
     @property
-    abstract bool isInterface() const;
+    bool isInterface() const;
 
     @property
-    abstract bool isPointer() const;
+    bool isPointer() const;
 
     @property
-    abstract bool isPrimitive() const;
+    bool isPrimitive() const;
 
     @property
-    abstract bool isStaticArray() const;
+    bool isStaticArray() const;
 
     @property
-    abstract bool isString() const;
+    bool isString() const;
 
     @property
-    abstract bool isStruct() const;
+    bool isStruct() const;
 }

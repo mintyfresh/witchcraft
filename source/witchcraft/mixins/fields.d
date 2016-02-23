@@ -23,7 +23,7 @@ mixin template WitchcraftField()
         }
 
         @property
-        override const(Attribute)[] getAttributes() const
+        const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, member));
 
@@ -37,7 +37,7 @@ mixin template WitchcraftField()
             return values;
         }
 
-        override const(Type) getDeclaringType() const
+        const(Type) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, member));
 
@@ -51,7 +51,7 @@ mixin template WitchcraftField()
             }
         }
 
-        override const(TypeInfo) getDeclaringTypeInfo() const
+        const(TypeInfo) getDeclaringTypeInfo() const
         {
             alias Parent = Alias!(__traits(parent, member));
 
@@ -66,17 +66,17 @@ mixin template WitchcraftField()
         }
 
         @property
-        override string getName() const
+        string getName() const
         {
             return name;
         }
 
-        override string getFullName() const
+        string getFullName() const
         {
             return fullyQualifiedName!member;
         }
 
-        override string getProtection() const
+        string getProtection() const
         {
             return __traits(getProtection, __traits(getMember, T, name));
         }

@@ -5,7 +5,7 @@ import witchcraft;
 
 import std.variant;
 
-abstract class Invocable : Member
+interface Invocable : Member
 {
     /++
      + Returns an array of `Type` objects representing this element's
@@ -18,7 +18,7 @@ abstract class Invocable : Member
      + See_Also:
      +   getParameterTypes
      ++/
-    abstract const(Type)[] getParameterTypes() const;
+    const(Type)[] getParameterTypes() const;
 
     /++
      + Returns an array representing the element's parameter types.
@@ -26,7 +26,7 @@ abstract class Invocable : Member
      + Returns:
      +   This method's parameter types.
      ++/
-    abstract const(TypeInfo)[] getParameterTypeInfos() const;
+    const(TypeInfo)[] getParameterTypeInfos() const;
 
     /++
      + A `Type` object that represent's this element's return type, if type
@@ -36,7 +36,7 @@ abstract class Invocable : Member
      +   This element's return type.
      ++/
     @property
-    abstract const(Type) getReturnType() const;
+    const(Type) getReturnType() const;
 
     /++
      + This element's return `TypeInfo` object.
@@ -45,7 +45,7 @@ abstract class Invocable : Member
      +   This element's return type.
      ++/
     @property
-    abstract const(TypeInfo) getReturnTypeInfo() const;
+    const(TypeInfo) getReturnTypeInfo() const;
 
     /++
      + Invokes this element on the given instance of class using arguments given
@@ -61,7 +61,7 @@ abstract class Invocable : Member
      + Returns:
      +   The result of the invocation.
      ++/
-    abstract Variant invoke(Variant instance, Variant[] arguments...) const;
+    Variant invoke(Variant instance, Variant[] arguments...) const;
 
     /++
      + Ditto, but arguments are taken as variadic arguments.
@@ -75,7 +75,7 @@ abstract class Invocable : Member
      + Returns:
      +   The result of the invocation.
      ++/
-    T invoke(T = Variant, O, TList...)(O instance, TList arguments) const
+    final T invoke(T = Variant, O, TList...)(O instance, TList arguments) const
     {
         auto values = new Variant[TList.length];
 
@@ -103,5 +103,5 @@ abstract class Invocable : Member
      +   `true` if the element accepts varargs.
      ++/
     @property
-    abstract bool isVarArgs() const;
+    bool isVarArgs() const;
 }

@@ -6,13 +6,13 @@ import witchcraft;
 abstract class Struct : Aggregate
 {
     @property
-    final override bool isClass() const
+    final bool isClass() const
     {
         return false;
     }
 
     @property
-    final override bool isStruct() const
+    final bool isStruct() const
     {
         return true;
     }

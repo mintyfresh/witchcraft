@@ -65,7 +65,7 @@ abstract class Class : Aggregate
      + Returns:
      +   The field object, or null if no such field exists.
      ++/
-    override const(Field) getField(string name) const
+    const(Field) getField(string name) const
     {
         auto field = getLocalField(name);
 
@@ -91,7 +91,7 @@ abstract class Class : Aggregate
      + Returns:
      +   An array of all known field objects belonging to this class.
      ++/
-    override const(Field)[] getFields() const
+    const(Field)[] getFields() const
     {
         if(getSuperClass !is null)
         {
@@ -155,7 +155,7 @@ abstract class Class : Aggregate
 
     abstract const(Method)[] getLocalMethods(string name) const;
 
-    override const(Method)[] getMethods() const
+    const(Method)[] getMethods() const
     {
         if(getSuperClass !is null)
         {
@@ -167,7 +167,7 @@ abstract class Class : Aggregate
         }
     }
 
-    override const(Method)[] getMethods(string name) const
+    const(Method)[] getMethods(string name) const
     {
         if(getSuperClass !is null)
         {
@@ -190,7 +190,7 @@ abstract class Class : Aggregate
     abstract bool isAbstract() const;
 
     @property
-    final override bool isClass() const
+    final bool isClass() const
     {
         return true;
     }
@@ -202,7 +202,7 @@ abstract class Class : Aggregate
     abstract bool isFinal() const;
 
     @property
-    final override bool isStruct() const
+    final bool isStruct() const
     {
         return false;
     }

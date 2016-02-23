@@ -87,139 +87,62 @@ abstract class Aggregate : Type
      ++/
     abstract const(Constructor)[] getConstructors() const;
 
-    /++
-     + Looks up a field by name.
-     +
-     + Params:
-     +   name = The name of the field.
-     +
-     + Returns:
-     +   The field object, or null if no such field exists.
-     ++/
-    abstract const(Field) getField(string name) const;
-
-    /++
-     + Returns an array of the names of all fields defined by this type.
-     +
-     + This method is equivalent to mapping the result of `getFields()` to the
-     + names of the fields in the resulting array.
-     +
-     + Return:
-     +   An array of names of all known fields.
-     +
-     + See_Also:
-     +   getFields
-     ++/
-    final string[] getFieldNames() const
-    {
-        return getFields.map!"a.getName".array;
-    }
-
-    /++
-     + Returns an array of all fields defined by this type.
-     +
-     + Returns:
-     +   All fields objects on this type.
-     ++/
-    abstract const(Field)[] getFields() const;
-
-    final const(Method) getMethod(string name, Type[] parameterTypes...) const
-    {
-        foreach(method; getMethods(name))
-        {
-            if(method.getParameterTypes == parameterTypes)
-            {
-                return method;
-            }
-        }
-
-        return null;
-    }
-
-    final const(Method) getMethod(string name, TypeInfo[] parameterTypeInfos) const
-    {
-        foreach(method; getMethods(name))
-        {
-            if(method.getParameterTypeInfos == parameterTypeInfos)
-            {
-                return method;
-            }
-        }
-
-        return null;
-    }
-
-    final const(Method) getMethod(TList...)(string name) const
-    {
-        auto types = new TypeInfo[TList.length];
-
-        foreach(index, type; TList)
-        {
-            types[index] = typeid(type);
-        }
-
-        return this.getMethod(name, types);
-    }
-
-    final string[] getMethodNames() const
-    {
-        return getMethods.map!"a.getName".array;
-    }
-
-    abstract const(Method)[] getMethods() const;
-
-    abstract const(Method)[] getMethods(string name) const;
-
     @property
-    final override bool isAggregate() const
+    final bool isAggregate() const
     {
         return true;
     }
 
     @property
-    final override bool isArray() const
+    final bool isArray() const
     {
         return false;
     }
 
     @property
-    final override bool isAssocArray() const
+    final bool isAssocArray() const
     {
         return false;
     }
 
     @property
-    final override bool isBuiltIn() const
+    final bool isBuiltIn() const
     {
         return false;
     }
 
     @property
-    final override bool isInterface() const
+    final bool isInterface() const
     {
         return false;
     }
 
     @property
-    final override bool isPointer() const
+    final bool isModule() const
     {
         return false;
     }
 
     @property
-    final override bool isPrimitive() const
+    final bool isPointer() const
     {
         return false;
     }
 
     @property
-    final override bool isStaticArray() const
+    final bool isPrimitive() const
     {
         return false;
     }
 
     @property
-    final override bool isString() const
+    final bool isStaticArray() const
+    {
+        return false;
+    }
+
+    @property
+    final bool isString() const
     {
         return false;
     }

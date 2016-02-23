@@ -9,7 +9,7 @@ import std.variant;
 /++
  + Represents and grants access to a single constructor defined in a class.
  ++/
-class Constructor : Invocable
+abstract class Constructor : Invocable
 {
     /++
      + Invokes the constructor, passing in arguments as variant types.

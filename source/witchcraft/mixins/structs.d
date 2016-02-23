@@ -32,7 +32,7 @@ mixin template WitchcraftStruct()
             }
         }
 
-        override const(Attribute)[] getAttributes() const
+        const(Attribute)[] getAttributes() const
         {
             const(Attribute)[] attributes;
 
@@ -64,7 +64,7 @@ mixin template WitchcraftStruct()
             }
         }
 
-        override const(Type) getDeclaringType() const
+        const(Type) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -78,7 +78,7 @@ mixin template WitchcraftStruct()
             }
         }
 
-        override const(TypeInfo) getDeclaringTypeInfo() const
+        const(TypeInfo) getDeclaringTypeInfo() const
         {
             alias Parent = Alias!(__traits(parent, T));
 
@@ -92,29 +92,29 @@ mixin template WitchcraftStruct()
             }
         }
 
-        override const(Field) getField(string name) const
+        const(Field) getField(string name) const
         {
             auto ptr = name in _fields;
             return ptr ? *ptr : null;
         }
 
-        override const(Field)[] getFields() const
+        const(Field)[] getFields() const
         {
             return _fields.values;
         }
 
-        override string getFullName() const
+        string getFullName() const
         {
             return fullyQualifiedName!T;
         }
 
-        override const(Method)[] getMethods(string name) const
+        const(Method)[] getMethods(string name) const
         {
             auto ptr = name in _methods;
             return ptr ? *ptr : null;
         }
 
-        override const(Method)[] getMethods() const
+        const(Method)[] getMethods() const
         {
             const(Method)[] methods;
 
@@ -126,17 +126,17 @@ mixin template WitchcraftStruct()
             return methods;
         }
 
-        override string getName() const
+        string getName() const
         {
             return T.stringof;
         }
 
-        override string getProtection() const
+        string getProtection() const
         {
             return __traits(getProtection, T);
         }
 
-        override const(TypeInfo) getTypeInfo() const
+        const(TypeInfo) getTypeInfo() const
         {
             return typeid(T);
         }
