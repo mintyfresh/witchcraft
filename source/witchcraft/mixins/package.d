@@ -1,7 +1,6 @@
 
 module witchcraft.mixins;
 
-public import witchcraft.mixins.attributes;
 public import witchcraft.mixins.base;
 public import witchcraft.mixins.classes;
 public import witchcraft.mixins.constructors;

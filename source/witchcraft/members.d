@@ -20,19 +20,19 @@ interface Member
     const(Attribute)[] getAttributes() const;
 
     /++
-     + Returns an array of attributes of the given class that are attched to
+     + Returns an array of attributes of the given type that are attched to
      + this element. If no such attributes exist, an empty array is returned.
      +
      + Params:
-     +   class_ = The class of attribute to filter by.
+     +   attributeType = The type of attribute to filter by.
      +
      + Returns:
      +   An array of attributes.
      ++/
-    final const(Attribute)[] getAttributes(Class class_) const
+    final const(Attribute)[] getAttributes(Type attributeType) const
     {
         return getAttributes
-            .filter!(a => a.getAttributeClass == class_)
+            .filter!(a => a.getAttributeType == attributeType)
             .array;
     }
 
@@ -41,15 +41,15 @@ interface Member
      + this element. If no such attributes exist, an empty array is returned.
      +
      + Params:
-     +   type = The type of attribute to filter by.
+     +   attributeTypeInfo = The type of attribute to filter by.
      +
      + Returns:
      +   An array of attributes.
      ++/
-    final const(Attribute)[] getAttributes(TypeInfo type) const
+    final const(Attribute)[] getAttributes(TypeInfo attributeTypeInfo) const
     {
         return getAttributes
-            .filter!(a => a.getAttributeType == type)
+            .filter!(a => a.getAttributeTypeInfo == attributeTypeInfo)
             .array;
     }
 

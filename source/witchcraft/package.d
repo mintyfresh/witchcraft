@@ -6,6 +6,7 @@ public import witchcraft.attributes;
 public import witchcraft.classes;
 public import witchcraft.constructors;
 public import witchcraft.fields;
+public import witchcraft.impl;
 public import witchcraft.interfaces;
 public import witchcraft.invocable;
 public import witchcraft.members;

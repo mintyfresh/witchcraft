@@ -25,7 +25,6 @@ mixin template Witchcraft()
     @property
     static typeof(__typeinfoext) classof()
     {
-        mixin WitchcraftAttribute;
         mixin WitchcraftClass;
         mixin WitchcraftConstructor;
         mixin WitchcraftField;

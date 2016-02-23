@@ -18,10 +18,10 @@ abstract class Attribute
     }
 
     @property
-    abstract const(Class) getAttributeClass() const;
+    abstract const(Type) getAttributeType() const;
 
     @property
-    abstract const(TypeInfo) getAttributeType() const;
+    abstract const(TypeInfo) getAttributeTypeInfo() const;
 
     @property
     abstract bool isExpression() const;
