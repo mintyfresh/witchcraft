@@ -80,8 +80,15 @@ unittest
     assert(uClass.getName == "User");
     assert(aClass.getName == "Admin");
 
-    assert(eClass.getSuperClass !is null);
-    assert(eClass.getSuperClass.getName == "Object");
+    version(aggressive)
+    {
+        assert(eClass.getSuperClass !is null);
+        assert(eClass.getSuperClass.getName == "Object");
+    }
+    else
+    {
+        assert(eClass.getSuperClass is null);
+    }
 
     assert(uClass.getSuperClass is eClass);
     assert(aClass.getSuperClass is uClass);

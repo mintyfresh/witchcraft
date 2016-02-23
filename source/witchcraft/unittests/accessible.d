@@ -66,12 +66,19 @@ unittest
     assert(bClass.isAccessible == true);
     assert(bClass.getField("name").isAccessible == true);
 
-    assert(bClass.getSuperClass.getName == "Foo");
-    assert(bClass.getSuperClass.isAccessible == true);
-    assert(bClass.getSuperClass.getField("x").isAccessible == true);
-    assert(bClass.getSuperClass.getField("y").isAccessible == true);
-    assert(bClass.getSuperClass.getField("z").isAccessible == false);
+    version(aggressive)
+    {
+        assert(bClass.getSuperClass.getName == "Foo");
+        assert(bClass.getSuperClass.isAccessible == true);
+        assert(bClass.getSuperClass.getField("x").isAccessible == true);
+        assert(bClass.getSuperClass.getField("y").isAccessible == true);
+        assert(bClass.getSuperClass.getField("z").isAccessible == false);
 
-    assert(bClass.getSuperClass.getSuperClass.getName == "Secret");
-    assert(bClass.getSuperClass.getSuperClass.isAccessible == false);
+        assert(bClass.getSuperClass.getSuperClass.getName == "Secret");
+        assert(bClass.getSuperClass.getSuperClass.isAccessible == false);
+    }
+    else
+    {
+        assert(bClass.getSuperClass is null);
+    }
 }

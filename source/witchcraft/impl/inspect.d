@@ -17,17 +17,24 @@ if(TList.length == 1)
     }
     else
     {
-        static if(is(T == class))
+        version(aggressive)
         {
-            return new ClassImpl!T;
-        }
-        else static if(is(T == struct))
-        {
-            return new StructImpl!T;
-        }
-        else static if(is(T == interface))
-        {
-            return new InterfaceTypeImpl!T;
+            static if(is(T == class))
+            {
+                return new ClassImpl!T;
+            }
+            else static if(is(T == struct))
+            {
+                return new StructImpl!T;
+            }
+            else static if(is(T == interface))
+            {
+                return new InterfaceTypeImpl!T;
+            }
+            else
+            {
+                return null;
+            }
         }
         else
         {

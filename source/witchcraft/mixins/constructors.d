@@ -111,24 +111,28 @@ mixin template WitchcraftConstructor()
 
         Variant invoke(Variant instance, Variant[] arguments...) const
         {
+            import std.algorithm, std.conv, std.range, std.string;
+
             alias Params = Parameters!method;
 
+            enum variables = iota(0, Params.length)
+                .map!(i => "auto v%1$s = arguments[%1$s].get!(Params[%1$s]);".format(i))
+                .joiner.text;
+
             enum invokeString = iota(0, Params.length)
-                .map!(i => "arguments[%s].get!(Params[%s])".format(i, i))
-                .joiner(", ")
-                .text;
+                .map!(i => "v%s".format(i))
+                .joiner(", ").text;
+
+            mixin(variables);
+            mixin("Params args = AliasSeq!(" ~ invokeString ~ ");");
 
             static if(is(T == class))
             {
-                mixin("return Variant(new T(" ~ invokeString ~ "));");
-            }
-            else static if(is(T == struct))
-            {
-                mixin("return Variant(T(" ~ invokeString ~ "));");
+                return Variant(new T(args));
             }
             else
             {
-                static assert(0);
+                return Variant(T(args));
             }
         }
 
