@@ -25,6 +25,9 @@ abstract class Field : Member
     @property
     abstract bool isStatic() const;
 
+    @property
+    abstract bool isWritable() const;
+
     abstract void set(Variant instance, Variant value) const;
 
     void set(T, O)(O instance, T value) const

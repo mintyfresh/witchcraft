@@ -106,6 +106,17 @@ mixin template WitchcraftField()
             });
         }
 
+        @property
+        override bool isWritable() const
+        {
+            return __traits(compiles, {
+                T instance = void;
+                typeof(member) value = void;
+
+                __traits(getMember, instance, name) = value;
+            });
+        }
+
         override void set(Variant instance, Variant value) const
         {
             auto i = instance.get!T;
