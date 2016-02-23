@@ -6,6 +6,7 @@ import witchcraft;
 template ClassImpl(T)
 if(is(T == class))
 {
+    // TODO : Determine this more reliably.
     static if(__traits(getProtection, T) == "public")
     {
         // In this context, use field-impl.

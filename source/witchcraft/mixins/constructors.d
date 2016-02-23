@@ -37,29 +37,7 @@ mixin template WitchcraftConstructor()
         {
             alias Parent = Alias!(__traits(parent, method));
 
-            static if(__traits(hasMember, Parent, "classof"))
-            {
-                return Parent.classof;
-            }
-            else
-            {
-                static if(is(Parent == class))
-                {
-                    return new ClassImpl!Parent;
-                }
-                else static if(is(Parent == struct))
-                {
-                    return new StructImpl!Parent;
-                }
-                else static if(is(Parent == interface))
-                {
-                    return new InterfaceTypeImpl!Parent;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Parent;
         }
 
         const(TypeInfo) getDeclaringTypeInfo() const
@@ -87,29 +65,7 @@ mixin template WitchcraftConstructor()
 
             foreach(index, Parameter; Parameters!method)
             {
-                static if(__traits(hasMember, Parameter, "classof"))
-                {
-                    parameterTypes[index] = Parameter.classof;
-                }
-                else
-                {
-                    static if(is(Parameter == class))
-                    {
-                        parameterTypes[index] = new ClassImpl!Parameter;
-                    }
-                    else static if(is(Parameter == struct))
-                    {
-                        parameterTypes[index] = new StructImpl!Parameter;
-                    }
-                    else static if(is(Parameter == interface))
-                    {
-                        parameterTypes[index] = new InterfaceTypeImpl!Parameter;
-                    }
-                    else
-                    {
-                        parameterTypes[index] = null;
-                    }
-                }
+                parameterTypes[index] = inspect!Parameter;
             }
 
             return parameterTypes;
@@ -137,29 +93,7 @@ mixin template WitchcraftConstructor()
 
         const(Type) getReturnType() const
         {
-            static if(__traits(hasMember, Return, "classof"))
-            {
-                return Return.classof;
-            }
-            else
-            {
-                static if(is(Return == class))
-                {
-                    return new ClassImpl!Return;
-                }
-                else static if(is(Return == struct))
-                {
-                    return new StructImpl!Return;
-                }
-                else static if(is(Return == interface))
-                {
-                    return new InterfaceTypeImpl!Return;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Return;
         }
 
         @property
@@ -181,7 +115,7 @@ mixin template WitchcraftConstructor()
 
             enum invokeString = iota(0, Params.length)
                 .map!(i => "arguments[%s].get!(Params[%s])".format(i, i))
-                .joiner
+                .joiner(", ")
                 .text;
 
             static if(is(T == class))

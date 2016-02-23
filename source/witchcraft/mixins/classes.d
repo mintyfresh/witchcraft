@@ -76,29 +76,7 @@ mixin template WitchcraftClass()
         {
             alias Parent = Alias!(__traits(parent, T));
 
-            static if(__traits(hasMember, Parent, "classof"))
-            {
-                return Parent.classof;
-            }
-            else
-            {
-                static if(is(Parent == class))
-                {
-                    return new ClassImpl!Parent;
-                }
-                else static if(is(Parent == struct))
-                {
-                    return new StructImpl!Parent;
-                }
-                else static if(is(Parent == interface))
-                {
-                    return new InterfaceTypeImpl!Parent;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Parent;
         }
 
         const(TypeInfo) getDeclaringTypeInfo() const
@@ -122,14 +100,7 @@ mixin template WitchcraftClass()
 
             foreach(index, IFace; Interfaces)
             {
-                static if(__traits(hasMember, IFace, "classof"))
-                {
-                    values[index] = IFace.classof;
-                }
-                else
-                {
-                    values[index] = new InterfaceTypeImpl!IFace;
-                }
+                values[index] = cast(InterfaceType) inspect!IFace;
             }
 
             return values;
@@ -154,32 +125,13 @@ mixin template WitchcraftClass()
         {
             alias Bases = BaseClassesTuple!T;
 
-            static if(Bases.length == 0)
+            static if(Bases.length > 0)
             {
-                return null;
-            }
-            else static if(__traits(hasMember, Bases[0], "classof"))
-            {
-                return Bases[0].classof;
+                return cast(const(Class)) inspect!(Bases[0]);
             }
             else
             {
-                static if(is(Bases[0] == class))
-                {
-                    return new ClassImpl!(Bases[0]);
-                }
-                else static if(is(Bases[0] == struct))
-                {
-                    return new StructImpl!(Bases[0]);
-                }
-                else static if(is(Bases[0] == interface))
-                {
-                    return new InterfaceTypeImpl!(Bases[0]);
-                }
-                else
-                {
-                    return null;
-                }
+                return null;
             }
         }
 

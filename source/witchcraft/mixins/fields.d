@@ -39,29 +39,7 @@ mixin template WitchcraftField()
         {
             alias Parent = Alias!(__traits(parent, member));
 
-            static if(__traits(hasMember, Parent, "classof"))
-            {
-                return Parent.classof;
-            }
-            else
-            {
-                static if(is(Parent == class))
-                {
-                    return new ClassImpl!Parent;
-                }
-                else static if(is(Parent == struct))
-                {
-                    return new StructImpl!Parent;
-                }
-                else static if(is(Parent == interface))
-                {
-                    return new InterfaceTypeImpl!Parent;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Parent;
         }
 
         const(TypeInfo) getDeclaringTypeInfo() const
@@ -96,29 +74,7 @@ mixin template WitchcraftField()
 
         override const(Type) getValueType() const
         {
-            static if(__traits(hasMember, typeof(member), "classof"))
-            {
-                return typeof(member).classof;
-            }
-            else
-            {
-                static if(is(typeof(member) == class))
-                {
-                    return new ClassImpl!(typeof(member));
-                }
-                else static if(is(typeof(member) == struct))
-                {
-                    return new StructImpl!(typeof(member));
-                }
-                else static if(is(typeof(member) == interface))
-                {
-                    return new InterfaceTypeImpl!(typeof(member));
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!(typeof(member));
         }
 
         override const(TypeInfo) getValueTypeInfo() const

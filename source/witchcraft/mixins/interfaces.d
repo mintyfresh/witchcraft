@@ -3,16 +3,16 @@ module witchcraft.mixins.interfaces;
 
 mixin template WitchcraftInterface()
 {
-    static class InterfaceTypeImpl(T) : InterfaceType
+    import witchcraft;
+
+    import std.meta;
+    import std.traits;
+
+    static class InterfaceTypeMixin(T) : InterfaceType
     if(is(T == interface))
     {
         this()
         {
-            foreach(name; FieldNameTuple!T)
-            {
-                _fields[name] = new FieldMixin!(T, name);
-            }
-
             foreach(name; __traits(derivedMembers, T))
             {
                 static if(is(typeof(__traits(getMember, T, name)) == function))
@@ -45,29 +45,7 @@ mixin template WitchcraftInterface()
         {
             alias Parent = Alias!(__traits(parent, T));
 
-            static if(__traits(hasMember, Parent, "classof"))
-            {
-                return Parent.classof;
-            }
-            else
-            {
-                static if(is(Parent == class))
-                {
-                    return new ClassImpl!Parent;
-                }
-                else static if(is(Parent == struct))
-                {
-                    return new StructImpl!Parent;
-                }
-                else static if(is(Parent == interface))
-                {
-                    return new InterfaceTypeImpl!Parent;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Parent;
         }
 
         const(TypeInfo) getDeclaringTypeInfo() const
@@ -84,13 +62,13 @@ mixin template WitchcraftInterface()
             }
         }
 
-        const(Field) getField(string name) const
+        override const(Field) getField(string name) const
         {
             auto ptr = name in _fields;
             return ptr ? *ptr : null;
         }
 
-        const(Field)[] getFields() const
+        override const(Field)[] getFields() const
         {
             return _fields.values;
         }
@@ -100,13 +78,13 @@ mixin template WitchcraftInterface()
             return fullyQualifiedName!T;
         }
 
-        const(Method)[] getMethods(string name) const
+        override const(Method)[] getMethods(string name) const
         {
             auto ptr = name in _methods;
             return ptr ? *ptr : null;
         }
 
-        const(Method)[] getMethods() const
+        override const(Method)[] getMethods() const
         {
             const(Method)[] methods;
 

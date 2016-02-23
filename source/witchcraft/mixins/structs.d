@@ -3,6 +3,11 @@ module witchcraft.mixins.structs;
 
 mixin template WitchcraftStruct()
 {
+    import witchcraft;
+
+    import std.meta;
+    import std.traits;
+
     static class StructMixin(T) : Struct
     if(is(T == struct))
     {
@@ -65,29 +70,7 @@ mixin template WitchcraftStruct()
         {
             alias Parent = Alias!(__traits(parent, T));
 
-            static if(__traits(hasMember, Parent, "classof"))
-            {
-                return Parent.classof;
-            }
-            else
-            {
-                static if(is(Parent == class))
-                {
-                    return new ClassImpl!Parent;
-                }
-                else static if(is(Parent == struct))
-                {
-                    return new StructImpl!Parent;
-                }
-                else static if(is(Parent == interface))
-                {
-                    return new InterfaceTypeImpl!Parent;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Parent;
         }
 
         const(TypeInfo) getDeclaringTypeInfo() const

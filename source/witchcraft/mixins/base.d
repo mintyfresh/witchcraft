@@ -28,6 +28,7 @@ mixin template Witchcraft()
         mixin WitchcraftClass;
         mixin WitchcraftConstructor;
         mixin WitchcraftField;
+        mixin WitchcraftInterface;
         mixin WitchcraftMethod;
         mixin WitchcraftStruct;
 

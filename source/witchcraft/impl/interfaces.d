@@ -1,9 +1,9 @@
 
-module witchcraft.impl.structs;
+module witchcraft.impl.interfaces;
 
 import witchcraft;
 
-template StructImpl(T)
+template InterfaceTypeImpl(T)
 {
     // TODO : Determine this more reliably.
     static if(__traits(getProtection, T) == "public")
@@ -20,43 +20,32 @@ template StructImpl(T)
             alias MethodMixin = MethodImpl!(T, name, overload);
         }
 
-        // In this context, use constructor-impl.
-        template ConstructorMixin(T, size_t overload)
-        {
-            alias ConstructorMixin = ConstructorImpl!(T, overload);
-        }
+        mixin WitchcraftInterface;
 
-        mixin WitchcraftStruct;
-
-        alias StructImpl = StructMixin!T;
+        alias InterfaceTypeImpl = InterfaceTypeMixin!T;
     }
     else
     {
-        class StructImpl : Struct
+        class InterfaceTypeImpl : InterfaceType
         {
             const(Attribute)[] getAttributes() const
             {
-                assert(0, "Struct " ~ T.stringof ~ " is inaccessible.");
-            }
-
-            override const(Constructor)[] getConstructors() const
-            {
-                assert(0, "Struct " ~ T.stringof ~ " is inaccessible.");
+                assert(0, "Interface " ~ T.stringof ~ " is inaccessible.");
             }
 
             const(Type) getDeclaringType() const
             {
-                assert(0, "Struct " ~ T.stringof ~ " is inaccessible.");
+                assert(0, "Interface " ~ T.stringof ~ " is inaccessible.");
             }
 
             const(TypeInfo) getDeclaringTypeInfo() const
             {
-                assert(0, "Struct " ~ T.stringof ~ " is inaccessible.");
+                assert(0, "Interface " ~ T.stringof ~ " is inaccessible.");
             }
 
             string getFullName() const
             {
-                assert(0, "Struct " ~ T.stringof ~ " is inaccessible.");
+                assert(0, "Interface " ~ T.stringof ~ " is inaccessible.");
             }
 
             string getName() const
@@ -71,7 +60,7 @@ template StructImpl(T)
 
             const(TypeInfo) getTypeInfo() const
             {
-                assert(0, "Struct " ~ T.stringof ~ " is inaccessible.");
+                assert(0, "Interface " ~ T.stringof ~ " is inaccessible.");
             }
 
             @property

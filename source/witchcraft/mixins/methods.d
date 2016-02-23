@@ -33,29 +33,7 @@ mixin template WitchcraftMethod()
         {
             alias Parent = Alias!(__traits(parent, method));
 
-            static if(__traits(hasMember, Parent, "classof"))
-            {
-                return Parent.classof;
-            }
-            else
-            {
-                static if(is(Parent == class))
-                {
-                    return new ClassImpl!Parent;
-                }
-                else static if(is(Parent == struct))
-                {
-                    return new StructImpl!Parent;
-                }
-                else static if(is(Parent == interface))
-                {
-                    return new InterfaceTypeImpl!Parent;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Parent;
         }
 
         const(TypeInfo) getDeclaringTypeInfo() const
@@ -88,29 +66,7 @@ mixin template WitchcraftMethod()
 
             foreach(index, Parameter; Parameters!method)
             {
-                static if(__traits(hasMember, Parameter, "classof"))
-                {
-                    parameterTypes[index] = Parameter.classof;
-                }
-                else
-                {
-                    static if(is(Parameter == class))
-                    {
-                        parameterTypes[index] = new ClassImpl!Parameter;
-                    }
-                    else static if(is(Parameter == struct))
-                    {
-                        parameterTypes[index] = new StructImpl!Parameter;
-                    }
-                    else static if(is(Parameter == interface))
-                    {
-                        parameterTypes[index] = new InterfaceTypeImpl!Parameter;
-                    }
-                    else
-                    {
-                        parameterTypes[index] = null;
-                    }
-                }
+                parameterTypes[index] = inspect!Parameter;
             }
 
             return parameterTypes;
@@ -138,29 +94,7 @@ mixin template WitchcraftMethod()
 
         const(Type) getReturnType() const
         {
-            static if(__traits(hasMember, Return, "classof"))
-            {
-                return Return.classof;
-            }
-            else
-            {
-                static if(is(Parent == class))
-                {
-                    return new ClassImpl!Parent;
-                }
-                else static if(is(Parent == struct))
-                {
-                    return new StructImpl!Parent;
-                }
-                else static if(is(Parent == interface))
-                {
-                    return new InterfaceTypeImpl!Parent;
-                }
-                else
-                {
-                    return null;
-                }
-            }
+            return inspect!Return;
         }
 
         @property
@@ -182,21 +116,28 @@ mixin template WitchcraftMethod()
 
             alias Params = Parameters!method;
 
-            auto i = instance.get!T;
+            enum variables = iota(0, Params.length)
+                .map!(i => "auto v%1$s = arguments[%1$s].get!(Params[%1$s]);".format(i))
+                .joiner.text;
+
             enum invokeString = iota(0, Params.length)
-                .map!(i => "arguments[%s].get!(Params[%s])".format(i, i))
-                .joiner
-                .text;
+                .map!(i => "v%s".format(i))
+                .joiner(", ").text;
+
+            mixin(variables);
+
+            Unqual!T i = instance.get!(Unqual!T);
+            mixin("Params args = AliasSeq!(" ~ invokeString ~ ");");
 
             static if(!is(ReturnType!method == void))
             {
-                mixin("auto result = __traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
+                auto result = __traits(getOverloads, i, name)[overload](args);
 
                 return Variant(result);
             }
             else
             {
-                mixin("__traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
+                __traits(getOverloads, i, name)[overload](args);
 
                 return Variant(null);
             }
