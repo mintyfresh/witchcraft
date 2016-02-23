@@ -22,7 +22,6 @@ mixin template WitchcraftConstructor()
         const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, method));
-
             auto values = new Attribute[attributes.length];
 
             foreach(index, attribute; attributes)

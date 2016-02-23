@@ -22,11 +22,9 @@ mixin template WitchcraftField()
             return Variant(__traits(getMember, i, name));
         }
 
-        @property
         const(Attribute)[] getAttributes() const
         {
             alias attributes = AliasSeq!(__traits(getAttributes, member));
-
             auto values = new Attribute[attributes.length];
 
             foreach(index, attribute; attributes)

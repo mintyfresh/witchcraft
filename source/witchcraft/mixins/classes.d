@@ -41,14 +41,15 @@ mixin template WitchcraftClass()
 
         const(Attribute)[] getAttributes() const
         {
-            const(Attribute)[] attributes;
+            alias attributes = AliasSeq!(__traits(getAttributes, T));
+            auto values = new Attribute[attributes.length];
 
-            foreach(attribute; __traits(getAttributes, T))
+            foreach(index, attribute; attributes)
             {
-                attributes ~= new AttributeImpl!attribute;
+                values[index] = new AttributeImpl!attribute;
             }
 
-            return attributes;
+            return values;
         }
 
         override const(Constructor)[] getConstructors() const
