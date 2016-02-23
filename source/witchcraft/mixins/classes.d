@@ -5,15 +5,12 @@ mixin template WitchcraftClass()
 {
     import witchcraft;
 
+    import std.meta;
     import std.traits;
 
     static class ClassImpl(T) : Class
+    if(is(T == class))
     {
-    private:
-        Field[string] _fields;
-        Method[][string] _methods;
-
-    public:
         this()
         {
             foreach(name; FieldNameTuple!T)
@@ -105,35 +102,6 @@ mixin template WitchcraftClass()
         string getFullName() const
         {
             return fullyQualifiedName!T;
-        }
-
-        override const(Field) getLocalField(string name) const
-        {
-            auto ptr = name in _fields;
-            return ptr ? *ptr : null;
-        }
-
-        override const(Field)[] getLocalFields() const
-        {
-            return _fields.values;
-        }
-
-        override const(Method)[] getLocalMethods(string name) const
-        {
-            auto ptr = name in _methods;
-            return ptr ? *ptr : null;
-        }
-
-        override const(Method)[] getLocalMethods() const
-        {
-            const(Method)[] methods;
-
-            foreach(overloads; _methods.values)
-            {
-                methods ~= overloads;
-            }
-
-            return methods;
         }
 
         string getName() const

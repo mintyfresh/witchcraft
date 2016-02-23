@@ -8,6 +8,11 @@ import std.array;
 
 abstract class Aggregate : Type
 {
+protected:
+    Field[string] _fields;
+    Method[][string] _methods;
+
+public:
     /++
      + Looks up and returns a constructor with a parameter list that exactly
      + matches the given array of types.
@@ -87,6 +92,35 @@ abstract class Aggregate : Type
      ++/
     abstract const(Constructor)[] getConstructors() const;
 
+    const(Field) getField(string name) const
+    {
+        auto ptr = name in _fields;
+        return ptr ? *ptr : null;
+    }
+
+    const(Field)[] getFields() const
+    {
+        return _fields.values;
+    }
+
+    const(Method)[] getMethods(string name) const
+    {
+        auto ptr = name in _methods;
+        return ptr ? *ptr : null;
+    }
+
+    const(Method)[] getMethods() const
+    {
+        const(Method)[] methods;
+
+        foreach(overloads; _methods.values)
+        {
+            methods ~= overloads;
+        }
+
+        return methods;
+    }
+
     @property
     final bool isAggregate() const
     {
@@ -107,12 +141,6 @@ abstract class Aggregate : Type
 
     @property
     final bool isBuiltIn() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isInterface() const
     {
         return false;
     }

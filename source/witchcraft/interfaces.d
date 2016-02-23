@@ -3,70 +3,27 @@ module witchcraft.interfaces;
 
 import witchcraft;
 
-abstract class Interface : Type
+abstract class Interface : Aggregate
 {
+    final override const(Constructor)[] getConstructors() const
+    {
+        return [ ];
+    }
+
     @property
-    bool isAggregate() const
+    final bool isClass() const
     {
         return false;
     }
 
     @property
-    bool isArray() const
-    {
-        return false;
-    }
-
-    @property
-    bool isAssocArray() const
-    {
-        return false;
-    }
-
-    @property
-    bool isBuiltIn() const
-    {
-        return false;
-    }
-
-    @property
-    bool isClass() const
-    {
-        return false;
-    }
-
-    @property
-    bool isInterface() const
+    final bool isInterface() const
     {
         return true;
     }
 
     @property
-    bool isPointer() const
-    {
-        return false;
-    }
-
-    @property
-    bool isPrimitive() const
-    {
-        return false;
-    }
-
-    @property
-    bool isStaticArray() const
-    {
-        return false;
-    }
-
-    @property
-    bool isString() const
-    {
-        return false;
-    }
-
-    @property
-    bool isStruct() const
+    final bool isStruct() const
     {
         return false;
     }

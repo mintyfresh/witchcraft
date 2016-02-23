@@ -12,6 +12,12 @@ abstract class Struct : Aggregate
     }
 
     @property
+    final bool isInterface() const
+    {
+        return false;
+    }
+
+    @property
     final bool isStruct() const
     {
         return true;

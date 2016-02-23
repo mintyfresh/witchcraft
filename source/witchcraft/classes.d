@@ -65,7 +65,7 @@ abstract class Class : Aggregate
      + Returns:
      +   The field object, or null if no such field exists.
      ++/
-    const(Field) getField(string name) const
+    override const(Field) getField(string name) const
     {
         auto field = getLocalField(name);
 
@@ -91,7 +91,7 @@ abstract class Class : Aggregate
      + Returns:
      +   An array of all known field objects belonging to this class.
      ++/
-    const(Field)[] getFields() const
+    override const(Field)[] getFields() const
     {
         if(getSuperClass !is null)
         {
@@ -103,14 +103,20 @@ abstract class Class : Aggregate
         }
     }
 
-    abstract const(Field) getLocalField(string name) const;
+    const(Field) getLocalField(string name) const
+    {
+        return super.getField(name);
+    }
 
     string[] getLocalFieldNames() const
     {
         return getLocalFields.map!"a.getName".array;
     }
 
-    abstract const(Field)[] getLocalFields() const;
+    const(Field)[] getLocalFields() const
+    {
+        return super.getFields;
+    }
 
     const(Method) getLocalMethod(string name, TypeInfo[] parameterTypes...) const
     {
@@ -151,11 +157,17 @@ abstract class Class : Aggregate
         return getLocalMethods.map!"a.getName".array;
     }
 
-    abstract const(Method)[] getLocalMethods() const;
+    const(Method)[] getLocalMethods() const
+    {
+        return super.getMethods;
+    }
 
-    abstract const(Method)[] getLocalMethods(string name) const;
+    const(Method)[] getLocalMethods(string name) const
+    {
+        return super.getMethods(name);
+    }
 
-    const(Method)[] getMethods() const
+    override const(Method)[] getMethods() const
     {
         if(getSuperClass !is null)
         {
@@ -167,7 +179,7 @@ abstract class Class : Aggregate
         }
     }
 
-    const(Method)[] getMethods(string name) const
+    override const(Method)[] getMethods(string name) const
     {
         if(getSuperClass !is null)
         {
@@ -193,6 +205,12 @@ abstract class Class : Aggregate
     final bool isClass() const
     {
         return true;
+    }
+
+    @property
+    final bool isInterface() const
+    {
+        return false;
     }
 
     /++

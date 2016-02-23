@@ -1,10 +1,10 @@
 
-module witchcraft.mixins.structs;
+module witchcraft.mixins.interfaces;
 
-mixin template WitchcraftStruct()
+mixin template WitchcraftInterface()
 {
-    static class StructImpl(T) : Struct
-    if(is(T == struct))
+    static class InterfaceImpl(T) : Interface
+    if(is(T == interface))
     {
         this()
         {
@@ -40,26 +40,6 @@ mixin template WitchcraftStruct()
             return attributes;
         }
 
-        override const(Constructor)[] getConstructors() const
-        {
-            static if(__traits(hasMember, T, "__ctor"))
-            {
-                alias constructors = AliasSeq!(__traits(getOverloads, T, "__ctor"));
-                auto values = new Constructor[constructors.length];
-
-                foreach(index, constructor; constructors)
-                {
-                    values[index] = new ConstructorImpl!(T, index);
-                }
-
-                return values;
-            }
-            else
-            {
-                return [ ];
-            }
-        }
-
         const(Type) getDeclaringType() const
         {
             alias Parent = Alias!(__traits(parent, T));
@@ -88,9 +68,38 @@ mixin template WitchcraftStruct()
             }
         }
 
+        const(Field) getField(string name) const
+        {
+            auto ptr = name in _fields;
+            return ptr ? *ptr : null;
+        }
+
+        const(Field)[] getFields() const
+        {
+            return _fields.values;
+        }
+
         string getFullName() const
         {
             return fullyQualifiedName!T;
+        }
+
+        const(Method)[] getMethods(string name) const
+        {
+            auto ptr = name in _methods;
+            return ptr ? *ptr : null;
+        }
+
+        const(Method)[] getMethods() const
+        {
+            const(Method)[] methods;
+
+            foreach(overloads; _methods.values)
+            {
+                methods ~= overloads;
+            }
+
+            return methods;
         }
 
         string getName() const
