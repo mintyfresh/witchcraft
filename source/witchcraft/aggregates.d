@@ -174,4 +174,9 @@ public:
     {
         return false;
     }
+
+    override string toString() const
+    {
+        return getFullName;
+    }
 }

@@ -13,6 +13,10 @@ mixin template Witchcraft()
     {
         private static Struct __typeinfoext;
     }
+    else static if(is(typeof(this) == interface))
+    {
+        private static InterfaceType __typeinfoext;
+    }
     else
     {
         static assert(0);
@@ -37,6 +41,10 @@ mixin template Witchcraft()
             else static if(is(typeof(this) == struct))
             {
                 __typeinfoext = new StructImpl!(typeof(this));
+            }
+            else static if(is(typeof(this) == interface))
+            {
+                __typeinfoext = new InterfaceTypeImpl!(typeof(this));
             }
             else
             {

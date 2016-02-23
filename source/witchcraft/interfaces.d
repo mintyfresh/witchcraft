@@ -3,7 +3,7 @@ module witchcraft.interfaces;
 
 import witchcraft;
 
-abstract class Interface : Aggregate
+abstract class InterfaceType : Aggregate
 {
     final override const(Constructor)[] getConstructors() const
     {

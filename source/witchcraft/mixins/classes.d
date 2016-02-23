@@ -100,6 +100,26 @@ mixin template WitchcraftClass()
             }
         }
 
+        override const(InterfaceType)[] getInterfaces() const
+        {
+            alias Interfaces = InterfacesTuple!T;
+            auto values = new InterfaceType[Interfaces.length];
+
+            foreach(index, IFace; Interfaces)
+            {
+                static if(__traits(hasMember, IFace, "classof"))
+                {
+                    values[index] = IFace.classof;
+                }
+                else
+                {
+                    values[index] = new InterfaceTypeImpl!IFace;
+                }
+            }
+
+            return values;
+        }
+
         string getFullName() const
         {
             return fullyQualifiedName!T;

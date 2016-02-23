@@ -3,7 +3,7 @@ module witchcraft.mixins.interfaces;
 
 mixin template WitchcraftInterface()
 {
-    static class InterfaceImpl(T) : Interface
+    static class InterfaceTypeImpl(T) : InterfaceType
     if(is(T == interface))
     {
         this()

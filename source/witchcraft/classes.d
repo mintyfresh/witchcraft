@@ -103,6 +103,8 @@ abstract class Class : Aggregate
         }
     }
 
+    abstract const(InterfaceType)[] getInterfaces() const;
+
     const(Field) getLocalField(string name) const
     {
         return super.getField(name);
