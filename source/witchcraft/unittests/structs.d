@@ -16,9 +16,13 @@ version(unittest)
 
 unittest
 {
-    Type uClass = User.classof;
+    auto uClass = User.classof;
 
     assert(uClass !is null);
+
+    assert(uClass.isAggregate == true);
+    assert(uClass.isClass     == false);
+    assert(uClass.isStruct    == true);
 
     assert(uClass.getName     == "User");
     assert(uClass.getFullName == "witchcraft.unittests.structs.User");

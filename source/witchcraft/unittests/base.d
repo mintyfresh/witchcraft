@@ -55,6 +55,10 @@ unittest
     assert(User.classof !is null);
     auto class_ = User.classof;
 
+    assert(class_.isAggregate == true);
+    assert(class_.isClass     == true);
+    assert(class_.isStruct    == false);
+
     /+ - Classes - +/
 
     assert(class_.getName     == "User");
