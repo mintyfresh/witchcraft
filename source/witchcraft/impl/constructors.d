@@ -1,6 +1,8 @@
 
 module witchcraft.impl.constructors;
 
+version(aggressive):
+
 import witchcraft;
 
 import std.variant;

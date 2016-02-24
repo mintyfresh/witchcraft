@@ -46,5 +46,12 @@ if(TList.length == 1)
 @property
 Type inspect(T)(T object)
 {
-    return inspect!T;
+    static if(__traits(hasMember, T, "classof"))
+    {
+        return object ? object.getClass : null;
+    }
+    else
+    {
+        return inspect!T;
+    }
 }

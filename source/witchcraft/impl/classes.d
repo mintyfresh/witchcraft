@@ -1,6 +1,8 @@
 
 module witchcraft.impl.classes;
 
+version(aggressive):
+
 import witchcraft;
 
 template ClassImpl(T)

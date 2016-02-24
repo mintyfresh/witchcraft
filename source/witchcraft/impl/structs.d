@@ -1,6 +1,8 @@
 
 module witchcraft.impl.structs;
 
+version(aggressive):
+
 import witchcraft;
 
 template StructImpl(T)

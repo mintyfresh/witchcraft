@@ -44,7 +44,7 @@ mixin template Witchcraft()
             }
             else static if(is(typeof(this) == interface))
             {
-                __typeinfoext = new InterfaceTypeImpl!(typeof(this));
+                __typeinfoext = new InterfaceTypeMixin!(typeof(this));
             }
             else
             {

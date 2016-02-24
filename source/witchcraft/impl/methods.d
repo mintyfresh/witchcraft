@@ -1,6 +1,8 @@
 
 module witchcraft.impl.methods;
 
+version(aggressive):
+
 import witchcraft;
 
 import std.variant;

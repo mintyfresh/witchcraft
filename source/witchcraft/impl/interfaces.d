@@ -1,6 +1,8 @@
 
 module witchcraft.impl.interfaces;
 
+version(aggressive):
+
 import witchcraft;
 
 template InterfaceTypeImpl(T)

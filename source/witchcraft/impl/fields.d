@@ -1,6 +1,8 @@
 
 module witchcraft.impl.fields;
 
+version(aggressive):
+
 import witchcraft;
 
 import std.variant;
