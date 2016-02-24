@@ -5,6 +5,16 @@ import witchcraft;
 
 import std.meta;
 
+/++
+ + Inspects a type given by template argument using the `metaof` property if
+ + the type defines one. Otherwise, a `null` is returned.
+ +
+ + If aggressive version of `Witchcraft` is used, this method behaves
+ + differently and returns a generic aggressive meta type.
+ +
+ + Returns:
+ +   The meta type of the type given by a parameter.
+ ++/
 @property
 Type inspect(TList...)()
 if(TList.length == 1)
@@ -43,12 +53,25 @@ if(TList.length == 1)
     }
 }
 
+/++
+ + Inspects a value, using the `getMetaType` method if present. Otherwise,
+ + the value's type is inspected by the generic `inspect` function type.
+ +
+ + Params:
+ +   value = The parameter value to be inspected.
+ +
+ + Returns:
+ +   The meta type of the value given by a parameter.
+ +
+ + See_Also:
+ +   inspect()
+ ++/
 @property
-Type inspect(T)(T object)
+Type inspect(T)(T value)
 {
-    static if(__traits(hasMember, T, "metaof"))
+    static if(__traits(hasMember, T, "getMetaType"))
     {
-        return object ? object.getMetaType : null;
+        return value ? value.getMetaType : null;
     }
     else
     {
