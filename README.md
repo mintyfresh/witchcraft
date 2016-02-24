@@ -68,7 +68,7 @@ Variant email = c.getField("email").get(user);
 // Or... Use a template argument to convert the result.
 // string email = as c.getField("email").get!(string)(user);
 
-// And now class user.updateEmail(email)
+// And now call user.updateEmail(email)
 c.getMethod!(string)("updateEmail").invoke(user, email);
 
 // Or... Use a TypeInfo object instead of template argument.
@@ -102,7 +102,7 @@ Witchcraft breaks up attributes into 2 types; Type attributes and Expression att
 ```d
 Struct s = User.metaof;
 
-// @Column on user cannot produce a value; it's a Type attribute.
+// @Column on username cannot produce a value; it's a Type attribute.
 Attribute uAttr = s.getField("username").getAttributes!(Column)[0];
 assert(uAttr.isType == true);
 
