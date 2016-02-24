@@ -52,8 +52,8 @@ version(unittest)
 
 unittest
 {
-    assert(User.classof !is null);
-    auto class_ = User.classof;
+    assert(User.metaof !is null);
+    auto class_ = User.metaof;
 
     assert(class_.isAggregate == true);
     assert(class_.isClass     == true);
@@ -122,7 +122,7 @@ unittest
 
     /+ - Methods - +/
 
-    assert(class_.getLocalMethodNames.isPermutation([ "getClass", "updateEmail" ]));
+    assert(class_.getLocalMethodNames.isPermutation([ "getMetaType", "updateEmail" ]));
 
     assert(class_.getMethods("updateEmail").empty == false);
     assert(class_.getMethod!(string)("updateEmail") !is null);

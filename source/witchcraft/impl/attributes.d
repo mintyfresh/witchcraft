@@ -23,9 +23,9 @@ class AttributeImpl(alias attribute) : Attribute
     {
         static if(is(typeof(attribute)))
         {
-            static if(__traits(hasMember, typeof(attribute), "classof"))
+            static if(__traits(hasMember, typeof(attribute), "metaof"))
             {
-                return typeof(attribute).classof;
+                return typeof(attribute).metaof;
             }
             else
             {
@@ -34,9 +34,9 @@ class AttributeImpl(alias attribute) : Attribute
         }
         else
         {
-            static if(__traits(hasMember, attribute, "classof"))
+            static if(__traits(hasMember, attribute, "metaof"))
             {
-                return attribute.classof;
+                return attribute.metaof;
             }
             else
             {

@@ -16,7 +16,7 @@ version(unittest)
 
 unittest
 {
-    auto uClass = User.classof;
+    auto uClass = User.metaof;
 
     assert(uClass !is null);
 

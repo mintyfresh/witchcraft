@@ -23,7 +23,7 @@ mixin template Witchcraft()
     }
 
     @property
-    static typeof(__typeinfoext) classof()
+    static typeof(__typeinfoext) metaof()
     {
         mixin WitchcraftClass;
         mixin WitchcraftConstructor;
@@ -55,18 +55,18 @@ mixin template Witchcraft()
         return __typeinfoext;
     }
 
-    static if(__traits(compiles, typeof(super).classof))
+    static if(__traits(compiles, typeof(super).metaof))
     {
-        override typeof(__typeinfoext) getClass()
+        override typeof(__typeinfoext) getMetaType()
         {
-            return typeof(this).classof;
+            return typeof(this).metaof;
         }
     }
     else
     {
-        typeof(__typeinfoext) getClass()
+        typeof(__typeinfoext) getMetaType()
         {
-            return typeof(this).classof;
+            return typeof(this).metaof;
         }
     }
 }

@@ -59,7 +59,7 @@ version(unittest)
 
 unittest
 {
-    auto bClass = Bar.classof;
+    auto bClass = Bar.metaof;
     assert(bClass !is null);
 
     assert(bClass.getName == "Bar");

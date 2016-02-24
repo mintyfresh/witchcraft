@@ -11,9 +11,9 @@ if(TList.length == 1)
 {
     alias T = TList[0];
 
-    static if(__traits(hasMember, T, "classof"))
+    static if(__traits(hasMember, T, "metaof"))
     {
-        return T.classof;
+        return T.metaof;
     }
     else
     {
@@ -46,9 +46,9 @@ if(TList.length == 1)
 @property
 Type inspect(T)(T object)
 {
-    static if(__traits(hasMember, T, "classof"))
+    static if(__traits(hasMember, T, "metaof"))
     {
-        return object ? object.getClass : null;
+        return object ? object.getMetaType : null;
     }
     else
     {

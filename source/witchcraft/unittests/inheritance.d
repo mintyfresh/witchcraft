@@ -34,9 +34,9 @@ unittest
 {
     import std.algorithm;
 
-    Class eClass = Entity.classof;
-    Class uClass = User.classof;
-    Class aClass = Admin.classof;
+    Class eClass = Entity.metaof;
+    Class uClass = User.metaof;
+    Class aClass = Admin.metaof;
 
     assert(eClass !is null && uClass !is null && aClass !is null);
 
@@ -70,9 +70,9 @@ unittest
     Entity u = new User;
     Entity a = new Admin;
 
-    Class eClass = Entity.classof;
-    Class uClass = u.getClass;
-    Class aClass = a.getClass;
+    Class eClass = Entity.metaof;
+    Class uClass = u.getMetaType;
+    Class aClass = a.getMetaType;
 
     assert(eClass !is null && uClass !is null && aClass !is null);
 
