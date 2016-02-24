@@ -40,6 +40,12 @@ void main()
 }
 ```
 
+#### Aggressive Mode!
+
+Witchcraft also comes with an option to enable 'Aggressive Mode'. Normally, only types that have `mixin Witchcraft;` can be reflected on, and any types that these may reference (ie. A method return type) must also have Witchcraft in to support reflection.
+
+In Aggressive Mode, Witchcraft will generate meta information for _all_ types that are referenced reflectively (and any types that those types may reference, and so on...). However, for any types that don't mixin Witchcraft, only public members will be accessible. You can test if an element is accessible with the `isAccessible` property.
+
 ### Fields, Methods, and Constructors
 
 Witchcraft grants runtime access to all fields, methods, and constructors of any type it is mixed into. Fields and methods alike are easily accessible en-masse (returned as an array), or individually given by name. Methods and constructors are both also accessible based on their overloads.
@@ -112,12 +118,6 @@ assert(pAttr.isExpression == true);
 ```
 
 `getAttributes` may also be called without a parameter to get all attributes on an element, or it can be given either a D `TypeInfo` or Witchcraft `Type` object in place of a template argument.
-
-## Aggressive Mode!
-
-Witchcraft also comes with an option to enable 'Aggressive Mode'. Normally, only types that have `mixin Witchcraft;` can be reflected on, and any types that these may reference (ie. A method return type) must also have Witchcraft in to support reflection.
-
-In Aggressive Mode, Witchcraft will generate meta information for _all_ types that are referenced reflectively (and any types that those types may reference, and so on...). However, for any types that don't mixin Witchcraft, only public members will be accessible. You can test if an element is accessible with the `isAccessible` property.
 
 ## Caveats
 
