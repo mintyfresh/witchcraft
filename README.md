@@ -65,11 +65,14 @@ Once you have your fields and methods, you are free to read, write, and call the
 // Fetch a variant holding the value of user.email
 Variant email = c.getField("email").get(user);
 
-// Or...
-// string email = as c.getField("email").get!string(user);
+// Or... Use a template argument to convert the result.
+// string email = as c.getField("email").get!(string)(user);
 
 // And now class user.updateEmail(email)
 c.getMethod!(string)("updateEmail").invoke(user, email);
+
+// Or... Use a TypeInfo object instead of template argument.
+// c.getMethod("updateEmail", typeid(string)).invoke(user, email);
 ```
 
 ### Attributes
