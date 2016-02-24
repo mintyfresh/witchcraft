@@ -199,16 +199,33 @@ abstract class Class : Aggregate
 
     /++
      + Checks if this class is abstract.
+     +
+     + Returns:
+     +   `true` if the class is abstract.
      ++/
     @property
     abstract bool isAbstract() const;
 
+    /++
+     + Checks if this type is a class. For children of `Class`, this always
+     + returns `true`.
+     +
+     + Returns:
+     +   `true` if the type is a class.
+     ++/
     @property
     final bool isClass() const
     {
         return true;
     }
 
+    /++
+     + Checks if this type is an interface. For children of `Class`, this always
+     + returns `false`.
+     +
+     + Returns:
+     +   `true` if the type is an interface.
+     ++/
     @property
     final bool isInterface() const
     {
@@ -217,10 +234,20 @@ abstract class Class : Aggregate
 
     /++
      + Checks if this class is final.
+     +
+     + Returns:
+     +   `true` if the type is final.
      ++/
     @property
     abstract bool isFinal() const;
 
+    /++
+     + Checks if this type is a struct. For children of `Class`, this always
+     + returns `false`.
+     +
+     + Returns:
+     +   `true` if the type is a struct.
+     ++/
     @property
     final bool isStruct() const
     {

@@ -7,6 +7,9 @@ import std.algorithm;
 import std.array;
 import std.variant;
 
+/++
+ + Represents and grants access to a single field defined on a type.
+ ++/
 abstract class Field : Member
 {
     abstract Variant get(Variant instance) const;
@@ -22,9 +25,23 @@ abstract class Field : Member
     @property
     abstract const(TypeInfo) getValueTypeInfo() const;
 
+    /++
+     + Checks if the field is declared as static. This returns true if the
+     + is directly accessible on the type that is declared on (rather that on
+     + an instance of that type).
+     +
+     + Returns:
+     +   `true` if this field is static.
+     ++/
     @property
     abstract bool isStatic() const;
 
+    /++
+     + Checks if the field can be written to.
+     +
+     + Returns:
+     +   `true` if the value of the field can be set.
+     ++/
     @property
     abstract bool isWritable() const;
 

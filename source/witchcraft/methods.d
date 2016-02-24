@@ -6,7 +6,7 @@ import witchcraft;
 import std.string;
 
 /++
- + Represents and grants access to a single method defined in a class.
+ + Represents and grants access to a single method defined on a type.
  ++/
 abstract class Method : Invocable
 {
