@@ -134,7 +134,6 @@ abstract class Class : Aggregate
     const(Method) getLocalMethod(string name, TypeInfo[] parameterTypes...) const
     {
         return getLocalMethods(name)
-            .retro
             .filter!(m => m.getParameterTypes == parameterTypes)
             .takeOne
             .chain(null.only)
