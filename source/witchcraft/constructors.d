@@ -33,7 +33,16 @@ abstract class Constructor : Invocable
      ++/
     final T create(T, TList...)(TList arguments) const
     {
-        return this.invoke(null, arguments).get!T;
+        auto result = this.invoke(null, arguments);
+
+        static if(is(T == Variant))
+        {
+            return result;
+        }
+        else
+        {
+            return result.get!T;
+        }
     }
 
     /++
