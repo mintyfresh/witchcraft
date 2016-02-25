@@ -20,6 +20,15 @@ abstract class Method : Invocable
     abstract bool isFinal() const;
 
     /++
+     + Checks if this method is declared as an override.
+     +
+     + Returns:
+     +   `true` if the method is an override.
+     ++/
+    @property
+    abstract bool isOverride() const;
+
+    /++
      + Checks if this method is declared to be static.
      +
      + Returns:

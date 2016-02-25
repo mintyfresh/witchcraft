@@ -89,6 +89,12 @@ template MethodImpl(T, string name, size_t overload)
             }
 
             @property
+            override bool isOverride() const
+            {
+                assert(0, "Method " ~ name ~ " is inaccessible.");
+            }
+
+            @property
             override bool isStatic() const
             {
                 assert(0, "Method " ~ name ~ " is inaccessible.");

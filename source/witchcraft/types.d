@@ -5,6 +5,7 @@ import witchcraft;
 
 import std.algorithm;
 import std.array;
+import std.range;
 
 interface Type : Member
 {
@@ -34,7 +35,8 @@ interface Type : Member
 
     final const(Method) getMethod(string name, Type[] parameterTypes...) const
     {
-        foreach(method; this.getMethods(name))
+        // Iterate up the inheritance tree.
+        foreach(method; this.getMethods(name).retro)
         {
             if(parameterTypes == method.getParameterTypes)
             {
@@ -47,7 +49,8 @@ interface Type : Member
 
     final const(Method) getMethod(string name, TypeInfo[] parameterTypeInfos) const
     {
-        foreach(method; this.getMethods(name))
+        // Iterate up the inheritance tree.
+        foreach(method; this.getMethods(name).retro)
         {
             if(parameterTypeInfos == method.getParameterTypeInfos)
             {

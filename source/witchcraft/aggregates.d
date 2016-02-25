@@ -5,6 +5,7 @@ import witchcraft;
 
 import std.algorithm;
 import std.array;
+import std.range;
 
 abstract class Aggregate : Type
 {
@@ -25,7 +26,8 @@ public:
      ++/
     final const(Constructor) getConstructor(Type[] parameterTypes...) const
     {
-        foreach(constructor; getConstructors)
+        // Iterate up the inheritance tree.
+        foreach(constructor; getConstructors.retro)
         {
             if(constructor.getParameterTypes == parameterTypes)
             {
@@ -48,7 +50,8 @@ public:
      ++/
     final const(Constructor) getConstructor(TypeInfo[] parameterTypeInfos) const
     {
-        foreach(constructor; getConstructors)
+        // Iterate up the inheritance tree.
+        foreach(constructor; getConstructors.retro)
         {
             if(constructor.getParameterTypeInfos == parameterTypeInfos)
             {
@@ -113,6 +116,7 @@ public:
     {
         const(Method)[] methods;
 
+        // Flatten the overloads array.
         foreach(overloads; _methods.values)
         {
             methods ~= overloads;

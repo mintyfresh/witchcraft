@@ -156,6 +156,12 @@ mixin template WitchcraftMethod()
         }
 
         @property
+        override bool isOverride() const
+        {
+            return __traits(isOverrideFunction, method);
+        }
+
+        @property
         override bool isStatic() const
         {
             return __traits(isStaticFunction, method);

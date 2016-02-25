@@ -28,6 +28,9 @@ abstract class Constructor : Invocable
      + Ditto, but accepts arguments of any type, and permits the result to also
      + be cast to a type specified by template argument.
      +
+     + Params:
+     +   T = The conversion type. If Variant, no conversion is performed.
+     +
      + Returns:
      +   The result of the construct call, as the templated type.
      ++/

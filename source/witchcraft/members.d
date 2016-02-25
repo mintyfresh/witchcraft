@@ -84,7 +84,7 @@ interface Member
      +   The type of the declaring element.
      +
      + See_Also:
-     +   getDeclaringClass
+     +   getDeclaringType
      ++/
     const(TypeInfo) getDeclaringTypeInfo() const;
 

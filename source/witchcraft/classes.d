@@ -103,6 +103,14 @@ abstract class Class : Aggregate
         }
     }
 
+    /++
+     + Returns an array of all interfaces that are declared directly on this
+     + class. Interfaces that appear multiple times on the class are only
+     + present once in the array.
+     +
+     + Returns:
+     +   An array of interfaces on this class.
+     ++/
     abstract const(InterfaceType)[] getInterfaces() const;
 
     const(Field) getLocalField(string name) const
@@ -126,7 +134,7 @@ abstract class Class : Aggregate
 
         if(methods !is null)
         {
-            foreach(method; methods)
+            foreach(method; methods.retro)
             {
                 if(method.getParameterTypes == parameterTypes)
                 {
@@ -169,11 +177,27 @@ abstract class Class : Aggregate
         return super.getMethods(name);
     }
 
+    /++
+     + Returns all methods declared on this class, and non-private methods in
+     + classes that it inherits from. This is restricted to classes for which
+     + reflective information is present.
+     +
+     + Methods that are declared by a base class and are overriden by another
+     + class appear in the array for every class that delcares them.
+     +
+     + Returns:
+     +   All methods that are available to this class.
+     +
+     + See_Also:
+     +   getDeclaringType
+     ++/
     override const(Method)[] getMethods() const
     {
         if(getSuperClass !is null)
         {
-            return getSuperClass.getMethods ~ getLocalMethods;
+            return getSuperClass.getMethods
+                .filter!`a.getProtection != "private"`
+                .array ~ getLocalMethods;
         }
         else
         {
@@ -181,11 +205,22 @@ abstract class Class : Aggregate
         }
     }
 
+    /++
+     + Ditto, but returns only methods that match the given name.
+     +
+     + Params:
+     +   name = The name of the method to look for.
+     +
+     + Returns:
+     +   All methods that match the given name.
+     ++/
     override const(Method)[] getMethods(string name) const
     {
         if(getSuperClass !is null)
         {
-            return getSuperClass.getMethods(name) ~ getLocalMethods(name);
+            return getSuperClass.getMethods(name)
+                .filter!`a.getProtection != "private"`
+                .array ~ getLocalMethods(name);
         }
         else
         {
@@ -193,8 +228,22 @@ abstract class Class : Aggregate
         }
     }
 
+    /++
+     + Returns the parent of this class. If the class doesn't declare a super
+     + class, the super class is `Object`, unless the class itself is `Object`.
+     + For `Object`, this method always returns `null`.
+     +
+     + Returns:
+     +   This class's super class.
+     ++/
     abstract const(Class) getSuperClass() const;
 
+    /++
+     + Ditto, but a `TypeInfo` object is returned instead.
+     +
+     + Returns:
+     +   This class's super class.
+     ++/
     abstract const(TypeInfo) getSuperTypeInfo() const;
 
     /++
