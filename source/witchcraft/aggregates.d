@@ -9,11 +9,6 @@ import std.range;
 
 abstract class Aggregate : Type
 {
-protected:
-    Field[string] _fields;
-    Method[][string] _methods;
-
-public:
     /++
      + Looks up and returns a constructor with a parameter list that exactly
      + matches the given array of types.
@@ -27,15 +22,11 @@ public:
     final const(Constructor) getConstructor(Type[] parameterTypes...) const
     {
         // Iterate up the inheritance tree.
-        foreach(constructor; getConstructors.retro)
-        {
-            if(constructor.getParameterTypes == parameterTypes)
-            {
-                return constructor;
-            }
-        }
-
-        return null;
+        return getConstructors.retro
+            .filter!(c => c.getParameterTypes == parameterTypes)
+            .takeOne
+            .chain(null.only)
+            .front;
     }
 
     /++
@@ -51,15 +42,11 @@ public:
     final const(Constructor) getConstructor(TypeInfo[] parameterTypeInfos) const
     {
         // Iterate up the inheritance tree.
-        foreach(constructor; getConstructors.retro)
-        {
-            if(constructor.getParameterTypeInfos == parameterTypeInfos)
-            {
-                return constructor;
-            }
-        }
-
-        return null;
+        return getConstructors.retro
+            .filter!(c => c.getParameterTypeInfos == parameterTypeInfos)
+            .takeOne
+            .chain(null.only)
+            .front;
     }
 
     /++
@@ -95,92 +82,9 @@ public:
      ++/
     abstract const(Constructor)[] getConstructors() const;
 
-    const(Field) getField(string name) const
-    {
-        auto ptr = name in _fields;
-        return ptr ? *ptr : null;
-    }
-
-    const(Field)[] getFields() const
-    {
-        return _fields.values;
-    }
-
-    const(Method)[] getMethods(string name) const
-    {
-        auto ptr = name in _methods;
-        return ptr ? *ptr : [ ];
-    }
-
-    const(Method)[] getMethods() const
-    {
-        const(Method)[] methods;
-
-        // Flatten the overloads array.
-        foreach(overloads; _methods.values)
-        {
-            methods ~= overloads;
-        }
-
-        return methods;
-    }
-
     @property
-    final bool isAggregate() const
+    final override bool isAggregate() const
     {
         return true;
-    }
-
-    @property
-    final bool isArray() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isAssocArray() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isBuiltIn() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isModule() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isPointer() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isPrimitive() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isStaticArray() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isString() const
-    {
-        return false;
-    }
-
-    override string toString() const
-    {
-        return getFullName;
     }
 }

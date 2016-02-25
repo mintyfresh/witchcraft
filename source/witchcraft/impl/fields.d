@@ -7,7 +7,7 @@ import witchcraft;
 
 import std.variant;
 
-template FieldImpl(T, string name)
+template FieldImpl(alias T, string name)
 {
     // TODO : Determine this more reliably.
     static if(__traits(getProtection, __traits(getMember, T, name)) == "public")

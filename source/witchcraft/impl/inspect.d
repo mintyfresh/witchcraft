@@ -41,6 +41,10 @@ if(TList.length == 1)
             {
                 return new InterfaceTypeImpl!T;
             }
+            else static if(!is(T))
+            {
+                return new ModuleImpl!T;
+            }
             else
             {
                 return null;

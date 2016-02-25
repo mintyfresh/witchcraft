@@ -60,7 +60,7 @@ template InterfaceTypeImpl(T)
                 return __traits(getProtection, T);
             }
 
-            const(TypeInfo) getTypeInfo() const
+            override const(TypeInfo) getTypeInfo() const
             {
                 assert(0, "Interface " ~ T.stringof ~ " is inaccessible.");
             }

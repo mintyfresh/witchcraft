@@ -9,15 +9,29 @@ mixin template WitchcraftField()
     import std.traits;
     import std.variant;
 
-    static class FieldMixin(T, string name) : Field
+    static class FieldMixin(alias T, string name) : Field
     {
     private:
         alias member = Alias!(__traits(getMember, T, name));
 
+        enum bool writable = __traits(compiles, {
+            T instance = void;
+            typeof(member) value = void;
+
+            __traits(getMember, instance, name) = value;
+        });
+
     public:
         override Variant get(Variant instance) const
         {
-            auto i = instance.get!T;
+            static if(is(T))
+            {
+                auto i = instance.get!T;
+            }
+            else
+            {
+                alias i = T;
+            }
 
             return Variant(__traits(getMember, i, name));
         }
@@ -99,19 +113,28 @@ mixin template WitchcraftField()
         @property
         override bool isWritable() const
         {
-            return __traits(compiles, {
-                T instance = void;
-                typeof(member) value = void;
-
-                __traits(getMember, instance, name) = value;
-            });
+            return writable;
         }
 
         override void set(Variant instance, Variant value) const
         {
-            auto i = instance.get!T;
+            static if(is(T))
+            {
+                auto i = instance.get!T;
+            }
+            else
+            {
+                alias i = T;
+            }
 
-            __traits(getMember, i, name) = value.get!(typeof(member));
+            static if(writable)
+            {
+                __traits(getMember, i, name) = value.get!(typeof(member));
+            }
+            else
+            {
+                assert("Field " ~ name ~ " is not writable.");
+            }
         }
     }
 }

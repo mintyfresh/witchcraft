@@ -7,7 +7,7 @@ import witchcraft;
 
 import std.variant;
 
-template ConstructorImpl(T, size_t overload)
+template ConstructorImpl(alias T, size_t overload)
 {
     // TODO : Determine this more reliably.
     static if(__traits(getProtection, __traits(getOverloads, T, "__ctor")[overload]) == "public")

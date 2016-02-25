@@ -123,33 +123,47 @@ mixin template WitchcraftClass()
 
         override const(Class) getSuperClass() const
         {
-            alias Bases = BaseClassesTuple!T;
-
-            static if(Bases.length > 0)
+            static if(is(Unqual!T == Object))
             {
-                return cast(const(Class)) inspect!(Bases[0]);
+                return null;
             }
             else
             {
-                return null;
+                alias Bases = BaseClassesTuple!T;
+
+                static if(Bases.length > 0)
+                {
+                    return cast(const(Class)) inspect!(Bases[0]);
+                }
+                else
+                {
+                    return null;
+                }
             }
         }
 
         override const(TypeInfo) getSuperTypeInfo() const
         {
-            alias Bases = BaseClassesTuple!T;
-
-            static if(Bases.length > 0)
-            {
-                return typeid(Bases[0]);
-            }
-            else
+            static if(is(Unqual!T == Object))
             {
                 return null;
             }
+            else
+            {
+                alias Bases = BaseClassesTuple!T;
+
+                static if(Bases.length > 0)
+                {
+                    return typeid(Bases[0]);
+                }
+                else
+                {
+                    return null;
+                }
+            }
         }
 
-        const(TypeInfo) getTypeInfo() const
+        override const(TypeInfo) getTypeInfo() const
         {
             return T.classinfo;
         }

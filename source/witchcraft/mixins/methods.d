@@ -9,7 +9,7 @@ mixin template WitchcraftMethod()
     import std.traits;
     import std.variant;
 
-    static class MethodMixin(T, string name, size_t overload) : Method
+    static class MethodMixin(alias T, string name, size_t overload) : Method
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, name)[overload]);
@@ -116,28 +116,50 @@ mixin template WitchcraftMethod()
 
             alias Params = Parameters!method;
 
+            template NormalizeType(T)
+            {
+                static if(is(T == InoutOf!T))
+                {
+                    // HACK: There's no good way to remove inout-ness.
+                    alias NormalizeType = void *;
+                }
+                else
+                {
+                    alias NormalizeType = T;
+                }
+            }
+
             enum variables = iota(0, Params.length)
-                .map!(i => "auto v%1$s = arguments[%1$s].get!(Params[%1$s]);".format(i))
-                .joiner.text;
+                .map!(i => "auto v%1$s = arguments[%1$s].get!(NormalizeType!(Params[%1$s]));".format(i))
+                .joiner
+                .text;
 
             enum invokeString = iota(0, Params.length)
-                .map!(i => "v%s".format(i))
-                .joiner(", ").text;
+                .map!(i => "v%1$s".format(i))
+                .joiner(", ")
+                .text;
 
             mixin(variables);
 
-            Unqual!T i = instance.get!(Unqual!T);
-            mixin("Params args = AliasSeq!(" ~ invokeString ~ ");");
+            static if(is(T))
+            {
+                Unqual!T i = instance.get!(Unqual!T);
+            }
+            else
+            {
+                alias i = T;
+            }
 
             static if(!is(ReturnType!method == void))
             {
-                auto result = __traits(getOverloads, i, name)[overload](args);
+                mixin("auto result = __traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
 
                 return Variant(result);
             }
             else
             {
-                __traits(getOverloads, i, name)[overload](args);
+                mixin("__traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
+                //__traits(getOverloads, i, name)[overload](args);
 
                 return Variant(null);
             }

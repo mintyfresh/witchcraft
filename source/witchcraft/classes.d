@@ -257,22 +257,9 @@ abstract class Class : Aggregate
      +   `true` if the type is a class.
      ++/
     @property
-    final bool isClass() const
+    final override bool isClass() const
     {
         return true;
-    }
-
-    /++
-     + Checks if this type is an interface. For children of `Class`, this always
-     + returns `false`.
-     +
-     + Returns:
-     +   `true` if the type is an interface.
-     ++/
-    @property
-    final bool isInterface() const
-    {
-        return false;
     }
 
     /++
@@ -283,17 +270,4 @@ abstract class Class : Aggregate
      ++/
     @property
     abstract bool isFinal() const;
-
-    /++
-     + Checks if this type is a struct. For children of `Class`, this always
-     + returns `false`.
-     +
-     + Returns:
-     +   `true` if the type is a struct.
-     ++/
-    @property
-    final bool isStruct() const
-    {
-        return false;
-    }
 }

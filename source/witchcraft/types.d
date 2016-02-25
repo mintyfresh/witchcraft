@@ -7,8 +7,13 @@ import std.algorithm;
 import std.array;
 import std.range;
 
-interface Type : Member
+abstract class Type : Member
 {
+protected:
+    Field[string] _fields;
+    Method[][string] _methods;
+
+public:
     /++
      + Looks up a field by name.
      +
@@ -18,11 +23,17 @@ interface Type : Member
      + Returns:
      +   The field object, or null if no such field exists.
      ++/
-    const(Field) getField(string name) const;
+    const(Field) getField(string name) const
+    {
+        auto ptr = name in _fields;
+        return ptr ? *ptr : null;
+    }
 
     final string[] getFieldNames() const
     {
-        return getFields.map!"a.getName".array;
+        return getFields
+            .map!"a.getName"
+            .array;
     }
 
     /++
@@ -31,34 +42,29 @@ interface Type : Member
      + Returns:
      +   All fields objects on this type.
      ++/
-    const(Field)[] getFields() const;
+    const(Field)[] getFields() const
+    {
+        return _fields.values;
+    }
 
     final const(Method) getMethod(string name, Type[] parameterTypes...) const
     {
         // Iterate up the inheritance tree.
-        foreach(method; this.getMethods(name).retro)
-        {
-            if(parameterTypes == method.getParameterTypes)
-            {
-                return method;
-            }
-        }
-
-        return null;
+        return this.getMethods(name).retro
+            .filter!(m => m.getParameterTypes == parameterTypes)
+            .takeOne
+            .chain(null.only)
+            .front;
     }
 
     final const(Method) getMethod(string name, TypeInfo[] parameterTypeInfos) const
     {
         // Iterate up the inheritance tree.
-        foreach(method; this.getMethods(name).retro)
-        {
-            if(parameterTypeInfos == method.getParameterTypeInfos)
-            {
-                return method;
-            }
-        }
-
-        return null;
+        return this.getMethods(name).retro
+            .filter!(m => m.getParameterTypeInfos == parameterTypeInfos)
+            .takeOne
+            .chain(null.only)
+            .front;
     }
 
     final const(Method) getMethod(TList...)(string name) const
@@ -73,47 +79,108 @@ interface Type : Member
         return this.getMethod(name, parameterTypeInfos);
     }
 
-    const(Method)[] getMethods() const;
+    const(Method)[] getMethods() const
+    {
+        const(Method)[] methods;
+
+        // Flatten the overloads array.
+        foreach(overloads; _methods.values)
+        {
+            methods ~= overloads;
+        }
+
+        return methods;
+    }
 
     final string[] getMethodNames() const
     {
-        return getMethods.map!"a.getName".array;
+        return getMethods
+            .map!"a.getName"
+            .array;
     }
 
-    const(Method)[] getMethods(string name) const;
+    const(Method)[] getMethods(string name) const
+    {
+        auto ptr = name in _methods;
+        return ptr ? *ptr : [ ];
+    }
 
-    const(TypeInfo) getTypeInfo() const;
-
-    @property
-    bool isAggregate() const;
-
-    @property
-    bool isArray() const;
+    abstract const(TypeInfo) getTypeInfo() const;
 
     @property
-    bool isAssocArray() const;
+    bool isAggregate() const
+    {
+        return false;
+    }
 
     @property
-    bool isBuiltIn() const;
+    bool isArray() const
+    {
+        return false;
+    }
 
     @property
-    bool isClass() const;
+    bool isAssocArray() const
+    {
+        return false;
+    }
 
     @property
-    bool isInterface() const;
+    bool isBuiltIn() const
+    {
+        return false;
+    }
 
     @property
-    bool isPointer() const;
+    bool isClass() const
+    {
+        return false;
+    }
 
     @property
-    bool isPrimitive() const;
+    bool isInterface() const
+    {
+        return false;
+    }
 
     @property
-    bool isStaticArray() const;
+    bool isModule() const
+    {
+        return false;
+    }
 
     @property
-    bool isString() const;
+    bool isPointer() const
+    {
+        return false;
+    }
 
     @property
-    bool isStruct() const;
+    bool isPrimitive() const
+    {
+        return false;
+    }
+
+    @property
+    bool isStaticArray() const
+    {
+        return false;
+    }
+
+    @property
+    bool isString() const
+    {
+        return false;
+    }
+
+    @property
+    bool isStruct() const
+    {
+        return false;
+    }
+
+    override string toString() const
+    {
+        return getFullName;
+    }
 }

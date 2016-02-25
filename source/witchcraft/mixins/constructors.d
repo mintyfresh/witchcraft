@@ -13,7 +13,7 @@ mixin template WitchcraftConstructor()
     import std.traits;
     import std.variant;
 
-    static class ConstructorMixin(T, size_t overload) : Constructor
+    static class ConstructorMixin(alias T, size_t overload) : Constructor
     {
     private:
         alias method = Alias!(__traits(getOverloads, T, "__ctor")[overload]);

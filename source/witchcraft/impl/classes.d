@@ -93,7 +93,7 @@ if(is(T == class))
                 assert(0, "Class " ~ T.stringof ~ " is inaccessible.");
             }
 
-            const(TypeInfo) getTypeInfo() const
+            override const(TypeInfo) getTypeInfo() const
             {
                 assert(0, "Class " ~ T.stringof ~ " is inaccessible.");
             }

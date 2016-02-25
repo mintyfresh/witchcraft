@@ -17,9 +17,9 @@ mixin template Witchcraft()
     {
         private static InterfaceType __typeinfoext;
     }
-    else
+    else static if(!is(typeof(this)))
     {
-        static assert(0);
+        private static Module __typeinfoext;
     }
 
     @property
@@ -46,9 +46,9 @@ mixin template Witchcraft()
             {
                 __typeinfoext = new InterfaceTypeMixin!(typeof(this));
             }
-            else
+            else static if(!is(typeof(this)))
             {
-                static assert(0);
+                __typeinfoext = new ModuleImpl!(__traits(parent, __typeinfoext));
             }
         }
 
@@ -62,11 +62,18 @@ mixin template Witchcraft()
             return typeof(this).metaof;
         }
     }
-    else
+    else static if(is(typeof(this)))
     {
         typeof(__typeinfoext) getMetaType()
         {
             return typeof(this).metaof;
+        }
+    }
+    else
+    {
+        typeof(__typeinfoext) getMetaType()
+        {
+            return metaof;
         }
     }
 }

@@ -7,7 +7,7 @@ import witchcraft;
 
 import std.variant;
 
-template MethodImpl(T, string name, size_t overload)
+template MethodImpl(alias T, string name, size_t overload)
 {
     // TODO : Determine this more reliably.
     static if(__traits(getProtection, __traits(getOverloads, T, name)[overload]) == "public")

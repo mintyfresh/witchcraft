@@ -10,21 +10,16 @@ abstract class InterfaceType : Aggregate
         return [ ];
     }
 
+    /++
+     + Checks if this type is an interface. For children of `Interfalse`, this
+     + always returns `true`.
+     +
+     + Returns:
+     +   `true` if the type is an interface.
+     ++/
     @property
-    final bool isClass() const
-    {
-        return false;
-    }
-
-    @property
-    final bool isInterface() const
+    final override bool isInterface() const
     {
         return true;
-    }
-
-    @property
-    final bool isStruct() const
-    {
-        return false;
     }
 }

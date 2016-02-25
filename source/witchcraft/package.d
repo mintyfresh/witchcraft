@@ -12,5 +12,6 @@ public import witchcraft.invocable;
 public import witchcraft.members;
 public import witchcraft.methods;
 public import witchcraft.mixins;
+public import witchcraft.modules;
 public import witchcraft.structs;
 public import witchcraft.types;

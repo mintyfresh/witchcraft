@@ -102,7 +102,7 @@ mixin template WitchcraftStruct()
             return __traits(getProtection, T);
         }
 
-        const(TypeInfo) getTypeInfo() const
+        override const(TypeInfo) getTypeInfo() const
         {
             return typeid(T);
         }
