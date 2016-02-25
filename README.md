@@ -1,4 +1,4 @@
-# witchcraft
+# Witchcraft - Runtime Reflection is Magic
 Extensions to runtime reflection in D.
 
 Witchcraft provides enhanced runtime reflection facilities for D classes. It provides a means to interact with fields, functions, constructors, classes, and user-defined attributes at runtime (features D is sadly lacking). All of this happens through a simple and familiar API inspired by Java's `java.reflect` package.
@@ -16,7 +16,12 @@ class User
 
     string username;
     string password;
-    string email;
+
+    this(string username, string password)
+    {
+        this.username = username;
+        this.password = password;
+    }
 }
 ```
 
@@ -59,10 +64,10 @@ Method[] method = c.getMethods;
 Field field = c.getField("username");
 
 // Access all overloads of a method by name.
-Method[] overloads = c.getMethods("updateEmail");
+Method[] overloads = c.getMethods("updatePassword");
 
 // Access the updateEmail(string) method.
-Method method = c.getMethod!(string)("updateEmail");
+Method method = c.getMethod!(string)("updatePassword");
 ```
 
 Once you have your fields and methods, you are free to read, write, and call them. They also provide some useful properties like their types, attributes, parameters types, declaring types, etc. This includes useful properties like `isStatic`, to check if a method is static or bound to and instance of a class.
@@ -72,13 +77,35 @@ Once you have your fields and methods, you are free to read, write, and call the
 Variant email = c.getField("email").get(user);
 
 // Or... Use a template argument to convert the result.
-// string email = as c.getField("email").get!(string)(user);
+string email = as c.getField("email").get!(string)(user);
 
 // And now call user.updateEmail(email)
-c.getMethod!(string)("updateEmail").invoke(user, email);
+c.getMethod!(string)("updatePassword").invoke(user, email);
 
 // Or... Use a TypeInfo object instead of template argument.
-// c.getMethod("updateEmail", typeid(string)).invoke(user, email);
+c.getMethod("updatePassword", typeid(string)).invoke(user, email);
+```
+
+#### Templates not Required
+
+Witchcraft provides templated methods for convenience for every method that might accept or return a `Variant`, or any method that accepts D's `TypeInfo` or Witchcraft's `Type` objects. For example, if you were looking for a constructor that might accept behave like `this(string, string)`,
+
+```d
+// You'd have the option using templates,
+Constructor ctor = c.getConstructor!(string, string);
+
+// Or you can find it with runtime parameters.
+Constructor ctor = c.getConstructor(typeid(string), typeid(string));
+```
+
+Similarly, for returned values, you could do,
+
+```d
+// With templates, you can get a User object,
+User user = ctor.create!(User)("John Smith", "secret");
+
+// Without templates, Variants go in, Variants come out.
+Variant user = ctor.create(Variant("John Smith"), Variant("secret"));
 ```
 
 ### Attributes
