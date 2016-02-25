@@ -5,6 +5,7 @@ import witchcraft;
 
 import std.algorithm;
 import std.array;
+import std.range;
 import std.traits;
 
 /++
