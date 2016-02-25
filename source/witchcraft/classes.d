@@ -121,7 +121,9 @@ abstract class Class : Aggregate
 
     string[] getLocalFieldNames() const
     {
-        return getLocalFields.map!"a.getName".array;
+        return getLocalFields
+            .map!"a.getName"
+            .array;
     }
 
     const(Field)[] getLocalFields() const
@@ -131,24 +133,12 @@ abstract class Class : Aggregate
 
     const(Method) getLocalMethod(string name, TypeInfo[] parameterTypes...) const
     {
-        auto methods = getLocalMethods(name);
-
-        if(methods !is null)
-        {
-            foreach(method; methods.retro)
-            {
-                if(method.getParameterTypes == parameterTypes)
-                {
-                    return method;
-                }
-            }
-
-            return null;
-        }
-        else
-        {
-            return null;
-        }
+        return getLocalMethods(name)
+            .retro
+            .filter!(m => m.getParameterTypes == parameterTypes)
+            .takeOne
+            .chain(null.only)
+            .front;
     }
 
     const(Method) getLocalMethod(TList...)(string name) const
@@ -165,7 +155,9 @@ abstract class Class : Aggregate
 
     string[] getLocalMethodNames() const
     {
-        return getLocalMethods.map!"a.getName".array;
+        return getLocalMethods
+            .map!"a.getName"
+            .array;
     }
 
     const(Method)[] getLocalMethods() const
@@ -198,7 +190,8 @@ abstract class Class : Aggregate
         {
             return getSuperClass.getMethods
                 .filter!`a.getProtection != "private"`
-                .array ~ getLocalMethods;
+                .chain(getLocalMethods)
+                .array;
         }
         else
         {
@@ -221,7 +214,8 @@ abstract class Class : Aggregate
         {
             return getSuperClass.getMethods(name)
                 .filter!`a.getProtection != "private"`
-                .array ~ getLocalMethods(name);
+                .chain(getLocalMethods(name))
+                .array;
         }
         else
         {

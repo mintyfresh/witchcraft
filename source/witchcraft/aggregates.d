@@ -109,7 +109,7 @@ public:
     const(Method)[] getMethods(string name) const
     {
         auto ptr = name in _methods;
-        return ptr ? *ptr : null;
+        return ptr ? *ptr : [ ];
     }
 
     const(Method)[] getMethods() const
