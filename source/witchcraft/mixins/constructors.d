@@ -109,30 +109,40 @@ mixin template WitchcraftConstructor()
             }
         }
 
-        Variant invoke(Variant instance, Variant[] arguments...) const
+        static if(isAbstractClass!T)
         {
-            import std.algorithm, std.conv, std.range, std.string;
-
-            alias Params = Parameters!method;
-
-            enum variables = iota(0, Params.length)
-                .map!(i => "auto v%1$s = arguments[%1$s].get!(Params[%1$s]);".format(i))
-                .joiner.text;
-
-            enum invokeString = iota(0, Params.length)
-                .map!(i => "v%s".format(i))
-                .joiner(", ").text;
-
-            mixin(variables);
-            mixin("Params args = AliasSeq!(" ~ invokeString ~ ");");
-
-            static if(is(T == class))
+            Variant invoke(Variant instance, Variant[] arguments...) const
             {
-                return Variant(new T(args));
+                assert(0, T.stringof ~ " is abstract.");
             }
-            else
+        }
+        else
+        {
+            Variant invoke(Variant instance, Variant[] arguments...) const
             {
-                return Variant(T(args));
+                import std.algorithm, std.conv, std.range, std.string;
+
+                alias Params = Parameters!method;
+
+                enum variables = iota(0, Params.length)
+                    .map!(i => "auto v%1$s = arguments[%1$s].get!(Params[%1$s]);".format(i))
+                    .joiner.text;
+
+                enum invokeString = iota(0, Params.length)
+                    .map!(i => "v%s".format(i))
+                    .joiner(", ").text;
+
+                mixin(variables);
+                mixin("Params args = AliasSeq!(" ~ invokeString ~ ");");
+
+                static if(is(T == class))
+                {
+                    return Variant(new T(args));
+                }
+                else
+                {
+                    return Variant(T(args));
+                }
             }
         }
 

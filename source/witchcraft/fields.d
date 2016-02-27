@@ -14,9 +14,18 @@ abstract class Field : Member
 {
     abstract Variant get(Variant instance) const;
 
-    T get(T, O)(O instance) const
+    T get(T = Variant, O)(O instance) const
     {
-        return this.get(Variant(instance)).get!T;
+        auto result = this.get(Variant(instance));
+
+        static if(is(T == Variant))
+        {
+            return result;
+        }
+        else
+        {
+            return result.get!T;
+        }
     }
 
     @property
@@ -49,7 +58,7 @@ abstract class Field : Member
 
     void set(T, O)(O instance, T value) const
     {
-        return this.set(Variant(instance), Variant(value));
+        this.set(Variant(instance), Variant(value));
     }
 
     override string toString() const

@@ -24,16 +24,29 @@ mixin template WitchcraftField()
     public:
         override Variant get(Variant instance) const
         {
-            static if(is(T))
+            static if(is(T == class))
             {
-                auto i = instance.get!T;
+                auto this_ = cast(ClassInfo) typeid(T);
+                auto other = cast(ClassInfo) instance.type;
+
+                // Ensure both types exist and can be converted.
+                if(!(this_ && other && _d_isbaseof(this_, other)))
+                {
+                    assert(0, "Instance isn't type of `" ~ T.stringof ~ "`.");
+                }
+
+                auto obj = instance.coerce!T;
+            }
+            else static if(is(T))
+            {
+                auto obj = instance.get!T;
             }
             else
             {
-                alias i = T;
+                alias obj = T;
             }
 
-            return Variant(__traits(getMember, i, name));
+            return Variant(__traits(getMember, obj, name));
         }
 
         const(Attribute)[] getAttributes() const
@@ -118,18 +131,31 @@ mixin template WitchcraftField()
 
         override void set(Variant instance, Variant value) const
         {
-            static if(is(T))
+            static if(is(T == class))
             {
-                auto i = instance.get!T;
+                auto this_ = cast(ClassInfo) typeid(T);
+                auto other = cast(ClassInfo) instance.type;
+
+                // Ensure both types exist and can be converted.
+                if(!(this_ && other && _d_isbaseof(this_, other)))
+                {
+                    assert(0, "Instance isn't type of `" ~ T.stringof ~ "`.");
+                }
+
+                auto obj = instance.coerce!T;
+            }
+            else static if(is(T))
+            {
+                auto obj = instance.get!T;
             }
             else
             {
-                alias i = T;
+                alias obj = T;
             }
 
             static if(writable)
             {
-                __traits(getMember, i, name) = value.get!(typeof(member));
+                __traits(getMember, obj, name) = value.get!(typeof(member));
             }
             else
             {

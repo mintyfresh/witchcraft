@@ -15,3 +15,5 @@ public import witchcraft.mixins;
 public import witchcraft.modules;
 public import witchcraft.structs;
 public import witchcraft.types;
+
+extern(C) int _d_isbaseof(ClassInfo oc, ClassInfo c);
