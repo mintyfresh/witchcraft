@@ -30,7 +30,7 @@ mixin template WitchcraftField()
                 auto other = cast(ClassInfo) instance.type;
 
                 // Ensure both types exist and can be converted.
-                if(!(this_ && other && _d_isbaseof(this_, other)))
+                if(!this_ || !other || !(_d_isbaseof(this_, other) || _d_isbaseof(other, this_)))
                 {
                     assert(0, "Instance isn't type of `" ~ T.stringof ~ "`.");
                 }
@@ -137,7 +137,7 @@ mixin template WitchcraftField()
                 auto other = cast(ClassInfo) instance.type;
 
                 // Ensure both types exist and can be converted.
-                if(!(this_ && other && _d_isbaseof(this_, other)))
+                if(!this_ || !other || !(_d_isbaseof(this_, other) || _d_isbaseof(other, this_)))
                 {
                     assert(0, "Instance isn't type of `" ~ T.stringof ~ "`.");
                 }

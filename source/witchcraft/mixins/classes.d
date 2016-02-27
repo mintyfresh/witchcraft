@@ -185,5 +185,15 @@ mixin template WitchcraftClass()
         {
             return __traits(isFinalClass, T);
         }
+
+        override bool isSubClassOf(const Class other) const
+        {
+            return _d_isbaseof(T.classinfo, cast(ClassInfo) other.getTypeInfo);
+        }
+
+        override bool isSuperClassOf(const Class other) const
+        {
+            return _d_isbaseof(cast(ClassInfo) other.getTypeInfo, T.classinfo);
+        }
     }
 }

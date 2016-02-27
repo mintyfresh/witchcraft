@@ -270,4 +270,8 @@ abstract class Class : Aggregate
      ++/
     @property
     abstract bool isFinal() const;
+
+    abstract bool isSubClassOf(const Class other) const;
+
+    abstract bool isSuperClassOf(const Class other) const;
 }
