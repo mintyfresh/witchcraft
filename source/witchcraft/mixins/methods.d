@@ -141,25 +141,37 @@ mixin template WitchcraftMethod()
 
             mixin(variables);
 
-            static if(is(T))
+            static if(is(T == class))
             {
-                Unqual!T i = instance.get!(Unqual!T);
+                auto this_ = cast(ClassInfo) typeid(T);
+                auto other = cast(ClassInfo) instance.type;
+
+                // Ensure both types exist and can be converted.
+                if(!(this_ && other && _d_isbaseof(this_, other)))
+                {
+                    assert(0, "Instance isn't type of `" ~ T.stringof ~ "`.");
+                }
+
+                Unqual!T obj = instance.coerce!(Unqual!T);
+            }
+            else static if(is(T))
+            {
+                Unqual!T obj = instance.get!(Unqual!T);
             }
             else
             {
-                alias i = T;
+                alias obj = T;
             }
 
             static if(!is(ReturnType!method == void))
             {
-                mixin("auto result = __traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
+                mixin("auto result = __traits(getOverloads, obj, name)[overload](" ~ invokeString ~ ");");
 
                 return Variant(result);
             }
             else
             {
-                mixin("__traits(getOverloads, i, name)[overload](" ~ invokeString ~ ");");
-                //__traits(getOverloads, i, name)[overload](args);
+                mixin("__traits(getOverloads, obj, name)[overload](" ~ invokeString ~ ");");
 
                 return Variant(null);
             }
