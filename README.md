@@ -1,4 +1,4 @@
-# Witchcraft - Runtime Reflection is Magic
+# Witchcraft - Runtime Reflection is Magic [![DUB](https://img.shields.io/dub/v/witchcraft.svg)](http://code.dlang.org/packages/witchcraft) [![DUB](https://img.shields.io/dub/l/witchcraft.svg)](http://code.dlang.org/packages/witchcraft)
 Extensions to runtime reflection in D.
 
 Witchcraft provides enhanced runtime reflection facilities for D classes. It provides a means to interact with fields, functions, constructors, classes, and user-defined attributes at runtime (features D is sadly lacking). All of this happens through a simple and familiar API inspired by Java's `java.reflect` package.
