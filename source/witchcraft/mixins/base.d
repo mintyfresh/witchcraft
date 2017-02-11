@@ -1,55 +1,62 @@
-
 module witchcraft.mixins.base;
+
+import std.meta;
+
+template TypeOfMeta(T){
+    import witchcraft;
+
+    static if(is(T == class)) {
+        alias TypeOfMeta = Class;
+    } else static if(is(T == struct)) {
+        alias TypeOfMeta = Struct;
+    } else static if(is(T == interface)) {
+        alias TypeOfMeta = InterfaceType;
+    } else static if(!is(T)) {
+        alias TypeOfMeta = Module;
+    } else {
+        static assert(false); //todo: proper error
+    }
+}
+
+template ImplTypeOfMeta(T){
+    import witchcraft;
+    
+    mixin WitchcraftClass;
+    mixin WitchcraftConstructor;
+    mixin WitchcraftField;
+    mixin WitchcraftInterface;
+    mixin WitchcraftMethod;
+    mixin WitchcraftStruct;
+
+    static if(is(T == class)) {
+        alias ImplTypeOfMeta = ClassMixin!(T);
+    } else static if(is(T == struct)) {
+        alias ImplTypeOfMeta = StructMixin!(T);
+    } else static if(is(T == interface)) {
+        alias ImplTypeOfMeta = InterfaceTypeMixin!(T);
+    } else static if(!is(T)) {
+        alias ImplTypeOfMeta = ModuleImpl!(__traits(parent, T));
+    } else {
+        static assert(false); //todo: proper error
+    }
+}
+
+TypeOfMeta!(T) getMeta(T)(){
+    return new ImplTypeOfMeta!(T);
+}
 
 mixin template Witchcraft()
 {
     import witchcraft;
 
-    static if(is(typeof(this) == class))
-    {
-        private static Class __typeinfoext;
-    }
-    else static if(is(typeof(this) == struct))
-    {
-        private static Struct __typeinfoext;
-    }
-    else static if(is(typeof(this) == interface))
-    {
-        private static InterfaceType __typeinfoext;
-    }
-    else static if(!is(typeof(this)))
-    {
-        private static Module __typeinfoext;
-    }
+    private static TypeOfMeta!(typeof(this)) __typeinfoext;
 
     @property
     static typeof(__typeinfoext) metaof()
     {
-        mixin WitchcraftClass;
-        mixin WitchcraftConstructor;
-        mixin WitchcraftField;
-        mixin WitchcraftInterface;
-        mixin WitchcraftMethod;
-        mixin WitchcraftStruct;
-
         if(__typeinfoext is null)
         {
-            static if(is(typeof(this) == class))
-            {
-                __typeinfoext = new ClassMixin!(typeof(this));
-            }
-            else static if(is(typeof(this) == struct))
-            {
-                __typeinfoext = new StructMixin!(typeof(this));
-            }
-            else static if(is(typeof(this) == interface))
-            {
-                __typeinfoext = new InterfaceTypeMixin!(typeof(this));
-            }
-            else static if(!is(typeof(this)))
-            {
-                __typeinfoext = new ModuleImpl!(__traits(parent, __typeinfoext));
-            }
+            __typeinfoext = getMeta!(typeof(this))();
         }
 
         return __typeinfoext;

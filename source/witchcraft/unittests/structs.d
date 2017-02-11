@@ -12,18 +12,25 @@ version(unittest)
         string username;
         string password;
     }
+    
+    void testSuite(C)(C metaObject){
+        assert(metaObject.isAggregate == true);
+        assert(metaObject.isClass     == false);
+        assert(metaObject.isStruct    == true);
+
+        assert(metaObject.getName     == "User");
+        assert(metaObject.getFullName == "witchcraft.unittests.structs.User");
+    }
 }
 
 unittest
 {
-    auto uClass = User.metaof;
+    auto metaObjectByProperty = User.metaof;
+    auto metaObjectByFunction = getMeta!User();
 
-    assert(uClass !is null);
-
-    assert(uClass.isAggregate == true);
-    assert(uClass.isClass     == false);
-    assert(uClass.isStruct    == true);
-
-    assert(uClass.getName     == "User");
-    assert(uClass.getFullName == "witchcraft.unittests.structs.User");
+    assert(metaObjectByProperty !is null);
+    assert(metaObjectByFunction !is null);
+    
+    testSuite(metaObjectByProperty);
+    testSuite(metaObjectByFunction);
 }
