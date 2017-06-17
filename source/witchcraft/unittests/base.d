@@ -49,7 +49,8 @@ version(unittest)
         }
     }
     
-    void testSuite(C)(C metaObject){
+    void testSuite(C)(C metaObject)
+    {
         assert(metaObject.isAggregate == true);
         assert(metaObject.isClass     == true);
         assert(metaObject.isStruct    == false);

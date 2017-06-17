@@ -13,7 +13,8 @@ version(unittest)
         string password;
     }
     
-    void testSuite(C)(C metaObject){
+    void testSuite(C)(C metaObject)
+    {
         assert(metaObject.isAggregate == true);
         assert(metaObject.isClass     == false);
         assert(metaObject.isStruct    == true);

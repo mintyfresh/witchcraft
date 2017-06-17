@@ -2,23 +2,34 @@ module witchcraft.mixins.base;
 
 import std.meta;
 
-template TypeOfMeta(T){
+template TypeOfMeta(T)
+    {
     import witchcraft;
-
-    static if(is(T == class)) {
+    
+    static if(is(T == class))
+    {
         alias TypeOfMeta = Class;
-    } else static if(is(T == struct)) {
+    } 
+    else static if(is(T == struct)) 
+    {
         alias TypeOfMeta = Struct;
-    } else static if(is(T == interface)) {
+    }
+    else static if(is(T == interface))
+    {
         alias TypeOfMeta = InterfaceType;
-    } else static if(!is(T)) {
+    }
+    else static if(!is(T)) 
+    {
         alias TypeOfMeta = Module;
-    } else {
+    }
+    else
+    {
         static assert(false); //todo: proper error
     }
 }
 
-template ImplTypeOfMeta(T){
+template ImplTypeOfMeta(T)
+{
     import witchcraft;
     
     mixin WitchcraftClass;
@@ -28,20 +39,30 @@ template ImplTypeOfMeta(T){
     mixin WitchcraftMethod;
     mixin WitchcraftStruct;
 
-    static if(is(T == class)) {
+    static if(is(T == class))
+    {
         alias ImplTypeOfMeta = ClassMixin!(T);
-    } else static if(is(T == struct)) {
+    }
+    else static if(is(T == struct))
+    {
         alias ImplTypeOfMeta = StructMixin!(T);
-    } else static if(is(T == interface)) {
+    } 
+    else static if(is(T == interface))
+    {
         alias ImplTypeOfMeta = InterfaceTypeMixin!(T);
-    } else static if(!is(T)) {
+    }
+    else static if(!is(T))
+    {
         alias ImplTypeOfMeta = ModuleImpl!(__traits(parent, T));
-    } else {
+    }
+    else
+    {
         static assert(false); //todo: proper error
     }
 }
 
-TypeOfMeta!(T) getMeta(T)(){
+TypeOfMeta!(T) getMeta(T)()
+{
     return new ImplTypeOfMeta!(T);
 }
 
