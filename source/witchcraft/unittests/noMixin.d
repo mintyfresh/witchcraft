@@ -1,5 +1,5 @@
 
-module witchcraft.unittests.base;
+module witchcraft.unittests.noMixin;
 
 import witchcraft;
 
@@ -20,8 +20,6 @@ version(unittest)
     @Entity
     class User
     {
-        mixin Witchcraft;
-
         @Column
         string username;
 
@@ -58,7 +56,7 @@ version(unittest)
         /+ - Classes - +/
 
         assert(metaObject.getName     == "User");
-        assert(metaObject.getFullName == "witchcraft.unittests.base.User");
+        assert(metaObject.getFullName == "witchcraft.unittests.noMixin.User");
         assert(metaObject.isAbstract  == false);
         assert(metaObject.isFinal     == false);
 
@@ -118,7 +116,7 @@ version(unittest)
 
         /+ - Methods - +/
 
-        assert(metaObject.getLocalMethodNames.isPermutation([ "getMetaType", "updateEmail" ]));
+        assert(metaObject.getLocalMethodNames == [ "updateEmail" ]);
 
         assert(metaObject.getMethods("updateEmail").empty == false);
         assert(metaObject.getMethod!(string)("updateEmail") !is null);
@@ -132,15 +130,8 @@ version(unittest)
 
 unittest
 {
-    assert(User.metaof !is null);
-    assert(getMeta!User() !is null);
-    auto metaObjectByProperty = User.metaof;
-    auto metaObjectByFunction = getMeta!User();
+    auto metaObject = getMeta!User();
+    assert(metaObject !is null);
     
-    // dirty hack to compare meta object...
-    assert(metaObjectByProperty.getFullName() == metaObjectByFunction.getFullName());
-    
-    // ...less dirty way to ensure the same behaviour
-    testSuite(metaObjectByProperty);
-    testSuite(metaObjectByFunction);
+    testSuite(metaObject);
 }
