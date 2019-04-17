@@ -84,7 +84,11 @@ interface Invocable : Member
             values[index] = Variant(argument);
         }
 
-        auto result = this.invoke(Variant(instance), values);
+        static if(is(O == interface)) {
+            auto result = this.invoke(Variant(cast(Object)instance), values);
+        } else {
+            auto result = this.invoke(Variant(instance), values);
+        }
 
         static if(is(T == Variant))
         {
