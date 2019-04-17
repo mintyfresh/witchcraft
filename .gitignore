@@ -1,9 +1,32 @@
-.dub
-docs.json
-__dummy.html
+# Visual Studio Code
+.vscode/
+
+# Compiled Object files
 *.o
 *.obj
-*.lib
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
 *.dll
+
+# Compiled Static libraries
+*.a
+*.lib
+
+# Executables
 *.exe
-*.selections.json
+
+# DUB
+.dub
+dub.selections.json
+docs.json
+__dummy.html
+docs/
+
+# Code coverage
+*.lst
+
+# Others
+
+demo/demo

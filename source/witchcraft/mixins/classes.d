@@ -1,6 +1,21 @@
 
 module witchcraft.mixins.classes;
 
+template HasDefaultConstructor(C) {
+	bool helper() {
+        bool r = false;
+		foreach(overload; __traits(getOverloads, C, "__ctor")) {
+			static if(__traits(compiles, { C function() ctor = &overload; })) {
+                r = true;
+                break;
+            }
+		}
+		return r;
+	}
+
+	enum HasDefaultConstructor = helper();
+}
+
 mixin template WitchcraftClass()
 {
     import witchcraft;
@@ -8,8 +23,8 @@ mixin template WitchcraftClass()
     import std.meta;
     import std.traits;
 
-    static class ClassMixin(T) : Class
-    if(is(T == class))
+    static class ClassMixin(T) : Class 
+    if(is(T == class)) //  && HasDefaultConstructor!T
     {
         this()
         {
@@ -36,7 +51,14 @@ mixin template WitchcraftClass()
         @property
         override Object create() const
         {
-            return T.classinfo.create;
+            TypeInfo_Class classInfo = T.classinfo;
+            if(classInfo.defaultConstructor is null) {
+                throw new Exception("No default constructor found in " ~ classInfo.name ~ ".");
+            } else {
+                Object o = classInfo.create;
+                assert(o !is null);
+                return o;
+            }
         }
 
         const(Attribute)[] getAttributes() const

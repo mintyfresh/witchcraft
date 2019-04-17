@@ -67,6 +67,14 @@ interface Member
         return getAttributes(typeid(T));
     }
 
+    final bool hasAttribute(TypeInfo info) {
+        return getAttributes.canFind!(a => a.getAttributeTypeInfo == info);
+    }
+
+    final bool hasAttribute(T)() {
+        return hasAttribute(typeid(T));
+    }
+
     /++
      + Returns the type that encapsulates this one. Null is returned if this
      + is the topmost element, or if the outer type lacks reflective meta
