@@ -1,7 +1,7 @@
 
 module witchcraft.mixins.methods;
 
-mixin template WitchcraftMethod()
+mixin template WitchcraftMethod(T)
 {
     import witchcraft;
 
@@ -143,15 +143,20 @@ mixin template WitchcraftMethod()
 
             static if(is(T == class))
             {
-                auto this_ = cast(ClassInfo) typeid(T);
-                auto other = cast(ClassInfo) instance.type;
+                if(typeid(instance.type) != typeid(TypeInfo_Class)) {
+                    throw new Exception("The instance's type is not a class!");
+                }
+
+                ClassInfo this_ = cast(ClassInfo) typeid(T);
+                ClassInfo other = cast(ClassInfo) instance.type;
 
                 // Ensure both types exist and can be converted.
                 if(!this_ || !other || !(_d_isbaseof(this_, other) || _d_isbaseof(other, this_)))
                 {
-                    assert(0, "Instance isn't type of `" ~ T.stringof ~ "`.");
+                    assert(0, "The instance can't cast to `" ~ T.stringof ~ "`.");
                 }
-
+                // FIXME: Needing refactor or cleanup -@zhangxueping at 4/17/2019, 6:21:23 PM
+                // The Variant's coerce can't handle a instance from a interface
                 Unqual!T obj = instance.coerce!(Unqual!T);
             }
             else static if(is(T))

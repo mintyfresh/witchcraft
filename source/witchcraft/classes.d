@@ -8,6 +8,12 @@ import std.array;
 import std.range;
 import std.traits;
 
+
+interface ClassAccessor {
+    Class getMetaType();
+}
+
+
 /++
  + Represents and grants access to a class's attributes, fields, methods,
  + and constructors.

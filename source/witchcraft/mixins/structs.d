@@ -1,7 +1,7 @@
 
 module witchcraft.mixins.structs;
 
-mixin template WitchcraftStruct()
+mixin template WitchcraftStruct(T)
 {
     import witchcraft;
 

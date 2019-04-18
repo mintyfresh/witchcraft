@@ -3,7 +3,7 @@ module witchcraft.mixins.base;
 import std.meta;
 
 template TypeOfMeta(T)
-    {
+{
     import witchcraft;
     
     static if(is(T == class))
@@ -28,16 +28,18 @@ template TypeOfMeta(T)
     }
 }
 
-template ImplTypeOfMeta(T)
+mixin template Witchcraft()
 {
     import witchcraft;
-    
-    mixin WitchcraftClass;
-    mixin WitchcraftConstructor;
-    mixin WitchcraftField;
-    mixin WitchcraftInterface;
-    mixin WitchcraftMethod;
-    mixin WitchcraftStruct;
+
+    alias T = typeof(this);
+
+    mixin WitchcraftClass!T;
+    mixin WitchcraftConstructor!T;
+    mixin WitchcraftField!T;
+    mixin WitchcraftInterface!T;
+    mixin WitchcraftMethod!T;
+    mixin WitchcraftStruct!T;
 
     static if(is(T == class))
     {
@@ -59,25 +61,15 @@ template ImplTypeOfMeta(T)
     {
         static assert(false); //todo: proper error
     }
-}
 
-TypeOfMeta!(T) getMeta(T)()
-{
-    return new ImplTypeOfMeta!(T);
-}
-
-mixin template Witchcraft()
-{
-    import witchcraft;
-
-    private static TypeOfMeta!(typeof(this)) __typeinfoext;
+    private static TypeOfMeta!(T) __typeinfoext;
 
     @property
     static typeof(__typeinfoext) metaof()
     {
         if(__typeinfoext is null)
         {
-            __typeinfoext = getMeta!(typeof(this))();
+            __typeinfoext = new ImplTypeOfMeta();
         }
 
         return __typeinfoext;
@@ -87,14 +79,14 @@ mixin template Witchcraft()
     {
         override typeof(__typeinfoext) getMetaType()
         {
-            return typeof(this).metaof;
+            return T.metaof;
         }
     }
-    else static if(is(typeof(this)))
+    else static if(is(T))
     {
         typeof(__typeinfoext) getMetaType()
         {
-            return typeof(this).metaof;
+            return T.metaof;
         }
     }
     else
