@@ -34,12 +34,12 @@ mixin template Witchcraft()
 
     alias T = typeof(this);
 
-    mixin WitchcraftClass;
-    mixin WitchcraftConstructor;
-    mixin WitchcraftField;
-    mixin WitchcraftInterface;
-    mixin WitchcraftMethod;
-    mixin WitchcraftStruct;
+    mixin WitchcraftClass!T;
+    mixin WitchcraftConstructor!T;
+    mixin WitchcraftField!T;
+    mixin WitchcraftInterface!T;
+    mixin WitchcraftMethod!T;
+    mixin WitchcraftStruct!T;
 
     static if(is(T == class))
     {

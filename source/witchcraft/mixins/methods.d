@@ -1,7 +1,7 @@
 
 module witchcraft.mixins.methods;
 
-mixin template WitchcraftMethod()
+mixin template WitchcraftMethod(T)
 {
     import witchcraft;
 

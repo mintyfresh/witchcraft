@@ -1,7 +1,7 @@
 
 module witchcraft.mixins.constructors;
 
-mixin template WitchcraftConstructor()
+mixin template WitchcraftConstructor(T)
 {
     import witchcraft;
 

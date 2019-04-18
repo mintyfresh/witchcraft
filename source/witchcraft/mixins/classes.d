@@ -16,7 +16,7 @@ template HasDefaultConstructor(C) {
 	enum HasDefaultConstructor = helper();
 }
 
-mixin template WitchcraftClass()
+mixin template WitchcraftClass(T)
 {
     import witchcraft;
 

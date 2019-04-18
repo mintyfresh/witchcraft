@@ -1,7 +1,7 @@
 
 module witchcraft.mixins.fields;
 
-mixin template WitchcraftField()
+mixin template WitchcraftField(T)
 {
     import witchcraft;
 

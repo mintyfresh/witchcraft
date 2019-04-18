@@ -1,7 +1,7 @@
 
 module witchcraft.mixins.interfaces;
 
-mixin template WitchcraftInterface()
+mixin template WitchcraftInterface(T)
 {
     import witchcraft;
 
