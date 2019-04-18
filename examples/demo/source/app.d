@@ -1,6 +1,11 @@
-import std.stdio;
+
 import witchcraft;
+import user;
+
+import std.stdio;
 import std.variant;
+
+import std.experimental.logger;
 
 void main() {
     Class c = User.metaof;
@@ -9,14 +14,18 @@ void main() {
     Class c2 = accessor.getMetaType;
     assert(c is c2);
 
+    trace(c.toString());
+    trace(c.getName());
+    trace(c.getFullName());
+
     const(Attribute)[] attrs = c.getAttributes;
     writeln("\n=====iterate User's attributes ======");
     foreach (const(Attribute) attr; c.getAttributes) {
         writeln("===========");
-        writeln("isType: ", attr.isType);
-        writeln("isExpression: ", attr.isExpression);
-        writeln(attr.toString());
-        // writeln(attr.get!string());
+        trace("isType: ", attr.isType);
+        trace("isExpression: ", attr.isExpression);
+        trace(attr.toString());
+        // trace(attr.get!string());
     }
 
     assert(c.hasAttribute!(Table));
@@ -43,16 +52,16 @@ void testField(User user, const Class c) {
         if (valueType !is null) {
             // FIXME: Needing refactor or cleanup -@zhangxueping at 4/17/2019, 2:57:00 PM
             // 
-            writeln(valueType.toString());
+            trace(valueType.toString());
         }
 
         // Get value on instance 'user'
         const(TypeInfo) valueInfo = field.getValueTypeInfo();
         writef("type: %s, ", valueInfo.toString());
         if (valueInfo == typeid(string))
-            writefln("name: %s, value: %s", field.getName(), field.get!string(user));
+            tracef("name: %s, value: %s", field.getName(), field.get!string(user));
         else if (valueInfo == typeid(int))
-            writefln("name: %s, value: %d", field.getName(), field.get!int(user));
+            tracef("name: %s, value: %d", field.getName(), field.get!int(user));
     }
 
     const Field ageField = c.getField("age");
@@ -66,7 +75,7 @@ void testMethod(User user, const Class c) {
     writeln("\n=====iterate over User's methods ======");
 
     foreach (const Method method; c.getMethods()) {
-        writeln(method.toString());
+        trace(method.toString());
     }
 
     const Method privateMethod = c.getMethod("testPrivateMethod");
@@ -85,13 +94,48 @@ void testMethod(User user, const Class c) {
     assert(setAgeMethod !is null);
     setAgeMethod.invoke(user, 21);
     assert(getAgeMethod.invoke!(int)(user) == 21);
+
+
+    const Method setUserMethod = c.getMethod("setUser");
+    assert(setUserMethod is null);
+    // setUserMethod.invoke(user, "new name", 12);
+
+    writeln("\n===== method overload ====");
+    const(Method)[] setUserMethods = c.getMethods("setUser");
+    assert(setUserMethods !is null);
+    foreach(const Method m; setUserMethods) {
+        writefln("\n===== %s ====", m.toString());
+
+        const(Type)[] types = m.getParameterTypes();
+        assert(types !is null);
+        trace(types.length);
+        foreach(const Type t; types) {
+            // FIXME: Needing refactor or cleanup -@zhangxueping at 4/18/2019, 5:30:57 PM
+            // 
+            if(t !is null) // bug ?
+                trace(t.toString());
+        }
+
+        const(TypeInfo)[] typeInfoes = m.getParameterTypeInfos();
+        foreach(const TypeInfo t; typeInfoes) {
+            if(t !is null)
+                trace(t.toString());
+        }
+
+        if(typeInfoes[0] == typeid(string) && typeInfoes[1] == typeid(int)) {
+            m.invoke(user, "new name", 22);
+            assert(getAgeMethod.invoke!(int)(user) == 22);
+        }
+    }
 }
 
-void testAbstract(AbstractUser user, const Class c) {
+void testAbstract(AbstractUser!(int) user, const Class c) {
+
+    writeln("\n===== testAbstract ======");
 
     const Method getNameMethod = c.getMethod("getName");
     assert(getNameMethod !is null);
-    writeln(getNameMethod.invoke!(string)(user));
+    trace(getNameMethod.invoke!(string)(user));
 
     // const Method getAgeMethod = c.getMethod("getAge");
     // assert(getAgeMethod !is null);
@@ -99,80 +143,20 @@ void testAbstract(AbstractUser user, const Class c) {
 
 void testInterface(IUser user, const Class c) {
 
+    writeln("\n===== testInterface ======");
+
     Variant va = Variant(user);
-    writeln(va.type);
+    trace(va.type);
     // Object obj = va.get!(Object)(); // bug
 
     const Method getNameMethod = c.getMethod("getName");
     assert(getNameMethod !is null);
-    writeln(getNameMethod.invoke!(string)(user)); // cast(Object)
+    trace(getNameMethod.invoke!(string)(user)); // cast(Object)
 
     // const Method getAgeMethod = c.getMethod("getAge");
     // assert(getAgeMethod !is null);
 }
 
-interface IUser : ClassAccessor {
-    string getName();
-}
-
-abstract class AbstractUser : IUser {
-    mixin Witchcraft;
-    abstract string getName();
-}
-
-@Annotation @Table("nothing")
-@("string")
-class User : AbstractUser {
-    mixin Witchcraft;
-
-    string username;
-    string password;
-    int age;
-
-    private string male;
-
-    this() {
-        username = "noname";
-        password = "123456";
-        age = 20;
-    }
-
-    this(string username, string password) {
-        this.username = username;
-        this.password = password;
-    }
-
-    void setUserName(string name) {
-        this.username = name;
-    }
-
-    override string getName() {
-        return username;
-    }
-
-    int getAge() {
-        return age;
-    }
-
-    void setAge(int age) {
-        this.age = age;
-    }
-
-    private void testPrivateMethod() {
-
-    }
-
-    static void testStaticMethod() {
-
-    }
-}
-
-interface Annotation {
-}
-
-struct Table {
-    string name;
-}
 
 // import std.experimental.logger;
 // tracef("interface size: %d", this_.base.interfaces.length);
