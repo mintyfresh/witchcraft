@@ -70,7 +70,7 @@ void testMethod(User user, const Class c) {
     }
 
     const Method privateMethod = c.getMethod("testPrivateMethod");
-    assert(privateMethod is null);
+    assert(privateMethod !is null);
 
     const Method staticMethod = c.getLocalMethod("testStaticMethod");
     assert(staticMethod !is null);
@@ -116,6 +116,7 @@ interface IUser : ClassAccessor {
 }
 
 abstract class AbstractUser : IUser {
+    mixin Witchcraft;
     abstract string getName();
 }
 
@@ -127,6 +128,8 @@ class User : AbstractUser {
     string username;
     string password;
     int age;
+
+    private string male;
 
     this() {
         username = "noname";
