@@ -1,0 +1,10 @@
+{
+	"description": "A minimal D application.",
+	"license": "proprietary",
+	"name": "demo",
+	"dependencies": {
+		"witchcraft": { "path": "../.."
+		}
+	}
+
+}
