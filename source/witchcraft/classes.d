@@ -15,11 +15,12 @@ import std.traits;
 abstract class Class : Aggregate
 {
     /++
-     + Creates a new instance of the class, provided it has a default or
-     + zero-argument constructor.
+     + Creates a new instance of the class if it has a default or
+     + zero-argument constructor, return null otherwise.
      +
      + Returns:
      +   A new instance of the class.
+     +   null if the class doesn't provide a  default or zero-argument constructor.
      ++/
     @property
     abstract Object create() const;
@@ -35,6 +36,7 @@ abstract class Class : Aggregate
      ++/
     @property
     T create(T : Object)() const
+        if (isDefaultConstructible!T)
     {
         return cast(T) this.create;
     }

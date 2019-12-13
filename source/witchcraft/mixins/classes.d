@@ -22,7 +22,7 @@ mixin template WitchcraftClass()
             {
                 static if(is(typeof(__traits(getMember, T, name)) == function))
                 {
-                    static if(name != "__ctor" && name != "__dtor")
+                    static if(name != "__ctor" && name != "__dtor" && !__traits(isDisabled, __traits(getMember, T, name)))
                     {
                         foreach(index, overload; __traits(getOverloads, T, name))
                         {
@@ -36,7 +36,7 @@ mixin template WitchcraftClass()
         @property
         override Object create() const
         {
-            return T.classinfo.create;
+            return Object.factory(getFullName());
         }
 
         const(Attribute)[] getAttributes() const

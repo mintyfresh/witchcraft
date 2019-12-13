@@ -17,6 +17,9 @@ class User
     string username;
     string password;
 
+    this()
+    { }
+
     this(string username, string password)
     {
         this.username = username;

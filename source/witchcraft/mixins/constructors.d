@@ -12,6 +12,7 @@ mixin template WitchcraftConstructor()
     import std.string;
     import std.traits;
     import std.variant;
+    import witchcraft.traits;
 
     static class ConstructorMixin(alias T, size_t overload) : Constructor
     {
@@ -109,7 +110,7 @@ mixin template WitchcraftConstructor()
             }
         }
 
-        static if(isAbstractClass!T)
+        static if(isAbstractClass!T || !isDefaultConstructible!T)
         {
             Variant invoke(Variant instance, Variant[] arguments...) const
             {
